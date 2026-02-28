@@ -56,7 +56,7 @@ const BANNER: &str = r"
     ███████╗███████╗██║  ██║╚██████╔╝╚██████╗███████╗██║  ██║╚███╔███╔╝
     ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝
 
-    Zero overhead. Zero compromise. 100% Rust. 100% Agnostic.
+    DX 💎 — Universal development experience. 100+ LLM providers. 400+ connectors.
 
     ⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡
 ";
@@ -5779,9 +5779,9 @@ async fn scaffold_workspace(
     let identity = format!(
         "# IDENTITY.md — Who Am I?\n\n\
          - **Name:** {agent}\n\
-         - **Creature:** A Rust-forged AI — fast, lean, and relentless\n\
-         - **Vibe:** Sharp, direct, resourceful. Not corporate. Not a chatbot.\n\
-         - **Emoji:** \u{1f980}\n\n\
+         - **Platform:** Universal dev experience — 100+ LLM providers, 400+ connectors\n\
+         - **Vibe:** Sharp, direct, resourceful. Built for every developer on every platform.\n\
+         - **Emoji:** \u{1f48e}\n\n\
          ---\n\n\
          Update this file as you evolve. Your identity is yours to shape.\n"
     );
@@ -6286,7 +6286,7 @@ fn print_summary(config: &Config) {
     println!(
         "  {} {}",
         style("⚡").cyan(),
-        style("Happy hacking! 🦀").white().bold()
+        style("Happy hacking! 💎").white().bold()
     );
     println!();
 }

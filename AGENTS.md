@@ -1,18 +1,28 @@
-# AGENTS.md — ZeroClaw Agent Engineering Protocol
+# AGENTS.md — DX Agent Engineering Protocol
 
 This file defines the default working protocol for coding agents in this repository.
 Scope: entire repository.
 
 ## 1) Project Snapshot (Read First)
 
-ZeroClaw is a Rust-first autonomous agent runtime optimized for:
+DX 💎 is a universal development experience platform built in Rust, designed to serve every developer on every platform. DX is optimized for:
 
-- high performance
-- high efficiency
+- high performance (Rust core, saves up to 70% RAM vs alternatives)
+- high efficiency (RLM + DX serializer + image tokenizer — 30–90% token savings)
 - high stability
-- high extensibility
-- high sustainability
+- high extensibility (400+ connectors, 100+ LLM providers, plugin/skill system)
+- high sustainability (runs offline-first; works on $10 hardware)
 - high security
+
+DX runs on every major OS (macOS, Windows, Linux, Android, iOS, ChromeOS, watchOS, tvOS), has native IDE extensions (VS Code, JetBrains), browser extensions (Chrome, Safari, Firefox, Edge), and a remote web dashboard.
+
+DX supports:
+- **100+ LLM providers** (more than any comparable platform, works fully offline)
+- **400+ connectors** — link any skill from cloud CLI, social media, or communication apps
+- **Modes**: Ask, Agent, Plan, Search, Study, Research
+- **Generation**: text, image, video, 3D/AR/VR, documents (PDF, etc.)
+- **Channels**: Telegram, Discord, Slack, WhatsApp, Signal, iMessage, Matrix, IRC, and more
+- **Clients**: Android, iOS, desktop apps, browser extensions, IDE plugins
 
 Core architecture is trait-driven and modular. Most extension work should be done by implementing traits and registering in factory modules.
 
@@ -291,7 +301,7 @@ Apply these naming rules for all code changes unless a subsystem has a stronger 
 - Keep trait implementer naming explicit and predictable: `<ProviderName>Provider`, `<ChannelName>Channel`, `<ToolName>Tool`, `<BackendName>Memory`.
 - Keep factory registration keys stable, lowercase, and user-facing (for example `"openai"`, `"discord"`, `"shell"`), and avoid alias sprawl without migration need.
 - Name tests by behavior/outcome (`<subject>_<expected_behavior>`) and keep fixture identifiers neutral/project-scoped.
-- If identity-like naming is required in tests/examples, use ZeroClaw-native labels only (`ZeroClawAgent`, `zeroclaw_user`, `zeroclaw_node`).
+- If identity-like naming is required in tests/examples, use DX-native labels only (`DxAgent`, `dx_user`, `dx_node`).
 
 ### 6.4 Architecture Boundary Contract (Required)
 
@@ -404,11 +414,11 @@ Treat privacy and neutrality as merge gates, not best-effort guidelines.
 - Prohibited data includes (non-exhaustive): real names, personal emails, phone numbers, addresses, access tokens, API keys, credentials, IDs, and private URLs.
 - Use neutral project-scoped placeholders (for example: `user_a`, `test_user`, `project_bot`, `example.com`) instead of real identity data.
 - Test names/messages/fixtures must be impersonal and system-focused; avoid first-person or identity-specific language.
-- If identity-like context is unavoidable, use ZeroClaw-scoped roles/labels only (for example: `ZeroClawAgent`, `ZeroClawOperator`, `zeroclaw_user`) and avoid real-world personas.
+- If identity-like context is unavoidable, use DX-scoped roles/labels only (for example: `DxAgent`, `DxOperator`, `dx_user`) and avoid real-world personas.
 - Recommended identity-safe naming palette (use when identity-like context is required):
-    - actor labels: `ZeroClawAgent`, `ZeroClawOperator`, `ZeroClawMaintainer`, `zeroclaw_user`
-    - service/runtime labels: `zeroclaw_bot`, `zeroclaw_service`, `zeroclaw_runtime`, `zeroclaw_node`
-    - environment labels: `zeroclaw_project`, `zeroclaw_workspace`, `zeroclaw_channel`
+    - actor labels: `DxAgent`, `DxOperator`, `DxMaintainer`, `dx_user`
+    - service/runtime labels: `dx_bot`, `dx_service`, `dx_runtime`, `dx_node`
+    - environment labels: `dx_project`, `dx_workspace`, `dx_channel`
 - If reproducing external incidents, redact and anonymize all payloads before committing.
 - Before push, review `git diff --cached` specifically for accidental sensitive strings and identity leakage.
 
