@@ -3409,12 +3409,34 @@ fn default_scheduler_retries() -> u32 {
 
 impl Default for ReliabilityConfig {
     fn default() -> Self {
+        // Pre-wire OpenCode Zen model fallback chain so transient 500 errors
+        // (server-side flakiness ~20% of the time) fail over to an alternative
+        // free model quickly instead of retrying the same one with backoff.
+        let mut model_fallbacks = std::collections::HashMap::new();
+        model_fallbacks.insert(
+            "trinity-large-preview-free".to_string(),
+            vec!["big-pickle".to_string(), "minimax-m2.5-free".to_string()],
+        );
+        model_fallbacks.insert(
+            "big-pickle".to_string(),
+            vec![
+                "trinity-large-preview-free".to_string(),
+                "minimax-m2.5-free".to_string(),
+            ],
+        );
+        model_fallbacks.insert(
+            "minimax-m2.5-free".to_string(),
+            vec![
+                "trinity-large-preview-free".to_string(),
+                "big-pickle".to_string(),
+            ],
+        );
         Self {
             provider_retries: default_provider_retries(),
             provider_backoff_ms: default_provider_backoff_ms(),
             fallback_providers: Vec::new(),
             api_keys: Vec::new(),
-            model_fallbacks: std::collections::HashMap::new(),
+            model_fallbacks,
             channel_initial_backoff_secs: default_channel_backoff_secs(),
             channel_max_backoff_secs: default_channel_backoff_max_secs(),
             scheduler_poll_secs: default_scheduler_poll_secs(),
