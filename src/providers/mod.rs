@@ -1133,7 +1133,9 @@ fn create_provider_with_url_and_options(
             "Synthetic", "https://api.synthetic.new/openai/v1", key, AuthStyle::Bearer,
         ))),
         "opencode" | "opencode-zen" => Ok(Box::new(OpenAiCompatibleProvider::new(
-            "OpenCode Zen", "https://opencode.ai/zen/v1", key, AuthStyle::Bearer,
+            // OpenCode Zen is a free public API; fall back to the well-known
+            // public key when no OPENCODE_API_KEY is configured.
+            "OpenCode Zen", "https://opencode.ai/zen/v1", key.or(Some("public")), AuthStyle::Bearer,
         ))),
         name if zai_base_url(name).is_some() => Ok(Box::new(OpenAiCompatibleProvider::new(
             "Z.AI",

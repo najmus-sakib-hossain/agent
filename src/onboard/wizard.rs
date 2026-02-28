@@ -783,6 +783,7 @@ fn default_model_for_provider(provider: &str) -> String {
         "volcengine" => "doubao-1-5-pro-32k-250115".into(),
         "siliconflow" => "Pro/zai-org/GLM-4.7".into(),
         "qwen-code" => "qwen3-coder-plus".into(),
+        "opencode" | "opencode-zen" => "trinity-large-preview-free".into(),
         "ollama" => "llama3.2".into(),
         "llamacpp" => "ggml-org/gpt-oss-20b-GGUF".into(),
         "sglang" | "vllm" | "osaurus" => "default".into(),
@@ -1262,6 +1263,20 @@ fn curated_models_for_provider(provider_name: &str) -> Vec<(String, String)> {
             "default".to_string(),
             "Copilot default model (recommended)".to_string(),
         )],
+        "opencode" | "opencode-zen" => vec![
+            (
+                "trinity-large-preview-free".to_string(),
+                "Trinity Large (recommended, code-focused)".to_string(),
+            ),
+            (
+                "big-pickle".to_string(),
+                "Big Pickle (200K context)".to_string(),
+            ),
+            (
+                "minimax-m2.5-free".to_string(),
+                "MiniMax M2.5 (multilingual, 200K context)".to_string(),
+            ),
+        ],
         _ => vec![("default".to_string(), "Default model".to_string())],
     }
 }
@@ -2589,6 +2604,14 @@ async fn setup_provider(workspace_dir: &Path) -> Result<(String, String, String,
         }
 
         key
+    } else if canonical_provider_name(provider_name) == "opencode" {
+        print_bullet("OpenCode Zen is a free public API — no API key or sign-up required.");
+        print_bullet(
+            "Available models: trinity-large-preview-free, big-pickle, minimax-m2.5-free",
+        );
+        print_bullet("Optional: set OPENCODE_API_KEY if you have a premium account.");
+        println!();
+        String::new()
     } else if canonical_provider_name(provider_name) == "copilot" {
         print_bullet("GitHub Copilot uses GitHub OAuth device flow.");
         print_bullet("Press Enter to keep setup keyless and authenticate on first run.");
