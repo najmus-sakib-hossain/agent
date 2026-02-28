@@ -54,7 +54,7 @@ mod approval;
 mod auth;
 mod channels;
 mod rag {
-    pub use zeroclaw::rag::*;
+    pub use dx::rag::*;
 }
 mod config;
 mod coordination;
@@ -90,7 +90,7 @@ mod util;
 use config::Config;
 
 // Re-export so binary modules can use crate::<CommandEnum> while keeping a single source of truth.
-pub use zeroclaw::{
+pub use dx::{
     ChannelCommands, CronCommands, HardwareCommands, IntegrationCommands, MigrateCommands,
     PeripheralCommands, ServiceCommands, SkillCommands,
 };
@@ -121,9 +121,9 @@ enum EstopLevelArg {
     ToolFreeze,
 }
 
-/// `ZeroClaw` - Zero overhead. Zero compromise. 100% Rust.
+/// `DX` - Zero overhead. Zero compromise. 100% Rust.
 #[derive(Parser, Debug)]
-#[command(name = "zeroclaw")]
+#[command(name = "dx")]
 #[command(author = "theonlyhennygod")]
 #[command(version)]
 #[command(about = "The fastest, smallest AI assistant.", long_about = None)]
@@ -178,12 +178,12 @@ Launches an interactive chat session with the configured AI provider. \
 Use --message for single-shot queries without entering interactive mode.
 
 Examples:
-  zeroclaw agent                              # interactive session
-  zeroclaw agent -m \"Summarize today's logs\"  # single message
-  zeroclaw agent -p anthropic --model claude-sonnet-4-20250514
-  zeroclaw agent --peripheral nucleo-f401re:/dev/ttyACM0
-  zeroclaw agent --autonomy-level full --max-actions-per-hour 100
-  zeroclaw agent -m \"quick task\" --memory-backend none --compact-context")]
+  dx agent                              # interactive session
+  dx agent -m \"Summarize today's logs\"  # single message
+  dx agent -p anthropic --model claude-sonnet-4-20250514
+  dx agent --peripheral nucleo-f401re:/dev/ttyACM0
+  dx agent --autonomy-level full --max-actions-per-hour 100
+  dx agent -m \"quick task\" --memory-backend none --compact-context")]
     Agent {
         /// Single message mode (don't enter interactive mode)
         #[arg(short, long)]
@@ -239,11 +239,11 @@ and WebSocket connections. Bind address defaults to the values in \
 your config file (gateway.host / gateway.port).
 
 Examples:
-  zeroclaw gateway                  # use config defaults
-  zeroclaw gateway -p 8080          # listen on port 8080
-  zeroclaw gateway --host 0.0.0.0   # bind to all interfaces
-  zeroclaw gateway -p 0             # random available port
-  zeroclaw gateway --new-pairing    # clear tokens and generate fresh pairing code")]
+  dx gateway                  # use config defaults
+  dx gateway -p 8080          # listen on port 8080
+  dx gateway --host 0.0.0.0   # bind to all interfaces
+  dx gateway -p 0             # random available port
+  dx gateway --new-pairing    # clear tokens and generate fresh pairing code")]
     Gateway {
         /// Port to listen on (use 0 for random available port); defaults to config gateway.port
         #[arg(short, long)]
@@ -262,18 +262,18 @@ Examples:
     #[command(long_about = "\
 Start the long-running autonomous daemon.
 
-Launches the full ZeroClaw runtime: gateway server, all configured \
+Launches the full DX runtime: gateway server, all configured \
 channels (Telegram, Discord, Slack, etc.), heartbeat monitor, and \
-the cron scheduler. This is the recommended way to run ZeroClaw in \
+the cron scheduler. This is the recommended way to run DX in \
 production or as an always-on assistant.
 
-Use 'zeroclaw service install' to register the daemon as an OS \
+Use 'dx service install' to register the daemon as an OS \
 service (systemd/launchd) for auto-start on boot.
 
 Examples:
-  zeroclaw daemon                   # use config defaults
-  zeroclaw daemon -p 9090           # gateway on port 9090
-  zeroclaw daemon --host 127.0.0.1  # localhost only")]
+  dx daemon                   # use config defaults
+  dx daemon -p 9090           # gateway on port 9090
+  dx daemon --host 127.0.0.1  # localhost only")]
     Daemon {
         /// Port to listen on (use 0 for random available port); defaults to config gateway.port
         #[arg(short, long)]
@@ -303,18 +303,18 @@ Examples:
     /// Show system status (full details)
     Status,
 
-    /// Self-update ZeroClaw to the latest version
+    /// Self-update DX to the latest version
     #[command(long_about = "\
-Self-update ZeroClaw to the latest release from GitHub.
+Self-update DX to the latest release from GitHub.
 
 Downloads the appropriate pre-built binary for your platform and
 replaces the current executable. Requires write permissions to
 the binary location.
 
 Examples:
-  zeroclaw update              # Update to latest version
-  zeroclaw update --check      # Check for updates without installing
-  zeroclaw update --force      # Reinstall even if already up to date")]
+  dx update              # Update to latest version
+  dx update --check      # Check for updates without installing
+  dx update --force      # Reinstall even if already up to date")]
     Update {
         /// Check for updates without installing
         #[arg(long)]
@@ -328,19 +328,19 @@ Examples:
     /// Engage, inspect, and resume emergency-stop states.
     ///
     /// Examples:
-    /// - `zeroclaw estop`
-    /// - `zeroclaw estop --level network-kill`
-    /// - `zeroclaw estop --level domain-block --domain "*.chase.com"`
-    /// - `zeroclaw estop --level tool-freeze --tool shell --tool browser`
-    /// - `zeroclaw estop status`
-    /// - `zeroclaw estop resume --network`
-    /// - `zeroclaw estop resume --domain "*.chase.com"`
-    /// - `zeroclaw estop resume --tool shell`
+    /// - `dx estop`
+    /// - `dx estop --level network-kill`
+    /// - `dx estop --level domain-block --domain "*.chase.com"`
+    /// - `dx estop --level tool-freeze --tool shell --tool browser`
+    /// - `dx estop status`
+    /// - `dx estop resume --network`
+    /// - `dx estop resume --domain "*.chase.com"`
+    /// - `dx estop resume --tool shell`
     Estop {
         #[command(subcommand)]
         estop_command: Option<EstopSubcommands>,
 
-        /// Level used when engaging estop from `zeroclaw estop`.
+        /// Level used when engaging estop from `dx estop`.
         #[arg(long, value_enum)]
         level: Option<EstopLevelArg>,
 
@@ -365,14 +365,14 @@ Cron expressions use the standard 5-field format: \
 override with --tz and an IANA timezone name.
 
 Examples:
-  zeroclaw cron list
-  zeroclaw cron add '0 9 * * 1-5' 'Good morning' --tz America/New_York
-  zeroclaw cron add '*/30 * * * *' 'Check system health'
-  zeroclaw cron add-at 2025-01-15T14:00:00Z 'Send reminder'
-  zeroclaw cron add-every 60000 'Ping heartbeat'
-  zeroclaw cron once 30m 'Run backup in 30 minutes'
-  zeroclaw cron pause <task-id>
-  zeroclaw cron update <task-id> --expression '0 8 * * *' --tz Europe/London")]
+  dx cron list
+  dx cron add '0 9 * * 1-5' 'Good morning' --tz America/New_York
+  dx cron add '*/30 * * * *' 'Check system health'
+  dx cron add-at 2025-01-15T14:00:00Z 'Send reminder'
+  dx cron add-every 60000 'Ping heartbeat'
+  dx cron once 30m 'Run backup in 30 minutes'
+  dx cron pause <task-id>
+  dx cron update <task-id> --expression '0 8 * * *' --tz Europe/London")]
     Cron {
         #[command(subcommand)]
         cron_command: CronCommands,
@@ -391,16 +391,16 @@ Examples:
     #[command(long_about = "\
 Manage communication channels.
 
-Add, remove, list, and health-check channels that connect ZeroClaw \
+Add, remove, list, and health-check channels that connect DX \
 to messaging platforms. Supported channel types: telegram, discord, \
 slack, whatsapp, matrix, imessage, email.
 
 Examples:
-  zeroclaw channel list
-  zeroclaw channel doctor
-  zeroclaw channel add telegram '{\"bot_token\":\"...\",\"name\":\"my-bot\"}'
-  zeroclaw channel remove my-bot
-  zeroclaw channel bind-telegram zeroclaw_user")]
+  dx channel list
+  dx channel doctor
+  dx channel add telegram '{\"bot_token\":\"...\",\"name\":\"my-bot\"}'
+  dx channel remove my-bot
+  dx channel bind-telegram dx_user")]
     Channel {
         #[command(subcommand)]
         channel_command: ChannelCommands,
@@ -440,12 +440,12 @@ Enumerate connected USB devices, identify known development boards \
 probe-rs / ST-Link.
 
 Examples:
-  zeroclaw hardware discover
-  zeroclaw hardware introspect /dev/ttyACM0
-  zeroclaw hardware info --chip STM32F401RETx")]
+  dx hardware discover
+  dx hardware introspect /dev/ttyACM0
+  dx hardware info --chip STM32F401RETx")]
     Hardware {
         #[command(subcommand)]
-        hardware_command: zeroclaw::HardwareCommands,
+        hardware_command: dx::HardwareCommands,
     },
 
     /// Manage hardware peripherals (STM32, RPi GPIO, etc.)
@@ -457,14 +457,14 @@ to the agent (GPIO, sensors, actuators). Supported boards: \
 nucleo-f401re, rpi-gpio, esp32, arduino-uno.
 
 Examples:
-  zeroclaw peripheral list
-  zeroclaw peripheral add nucleo-f401re /dev/ttyACM0
-  zeroclaw peripheral add rpi-gpio native
-  zeroclaw peripheral flash --port /dev/cu.usbmodem12345
-  zeroclaw peripheral flash-nucleo")]
+  dx peripheral list
+  dx peripheral add nucleo-f401re /dev/ttyACM0
+  dx peripheral add rpi-gpio native
+  dx peripheral flash --port /dev/cu.usbmodem12345
+  dx peripheral flash-nucleo")]
     Peripheral {
         #[command(subcommand)]
-        peripheral_command: zeroclaw::PeripheralCommands,
+        peripheral_command: dx::PeripheralCommands,
     },
 
     /// Manage agent memory (list, get, stats, clear)
@@ -476,11 +476,11 @@ Supports filtering by category and session, pagination, and \
 batch clearing with confirmation.
 
 Examples:
-  zeroclaw memory stats
-  zeroclaw memory list
-  zeroclaw memory list --category core --limit 10
-  zeroclaw memory get <key>
-  zeroclaw memory clear --category conversation --yes")]
+  dx memory stats
+  dx memory list
+  dx memory list --category core --limit 10
+  dx memory get <key>
+  dx memory clear --category conversation --yes")]
     Memory {
         #[command(subcommand)]
         memory_command: MemoryCommands,
@@ -488,15 +488,15 @@ Examples:
 
     /// Manage configuration
     #[command(long_about = "\
-Manage ZeroClaw configuration.
+Manage DX configuration.
 
 Inspect and export configuration settings. Use 'schema' to dump \
 the full JSON Schema for the config file, which documents every \
 available key, type, and default value.
 
 Examples:
-  zeroclaw config schema              # print JSON Schema to stdout
-  zeroclaw config schema > schema.json")]
+  dx config schema              # print JSON Schema to stdout
+  dx config schema > schema.json")]
     Config {
         #[command(subcommand)]
         config_command: ConfigCommands,
@@ -504,14 +504,14 @@ Examples:
 
     /// Generate shell completion script to stdout
     #[command(long_about = "\
-Generate shell completion scripts for `zeroclaw`.
+Generate shell completion scripts for `dx`.
 
 The script is printed to stdout so it can be sourced directly:
 
 Examples:
-  source <(zeroclaw completions bash)
-  zeroclaw completions zsh > ~/.zfunc/_zeroclaw
-  zeroclaw completions fish > ~/.config/fish/completions/zeroclaw.fish")]
+  source <(dx completions bash)
+  dx completions zsh > ~/.zfunc/_dx
+  dx completions fish > ~/.config/fish/completions/dx.fish")]
     Completions {
         /// Target shell
         #[arg(value_enum)]
@@ -735,7 +735,7 @@ async fn main() -> Result<()> {
         if config_dir.trim().is_empty() {
             bail!("--config-dir cannot be empty");
         }
-        std::env::set_var("ZEROCLAW_CONFIG_DIR", config_dir);
+        std::env::set_var("DX_CONFIG_DIR", config_dir);
     }
 
     // Completions must remain stdout-only and should not load config or initialize logging.
@@ -813,7 +813,7 @@ async fn main() -> Result<()> {
             .await
         }?;
         // Auto-start channels if user said yes during wizard
-        if std::env::var("ZEROCLAW_AUTOSTART_CHANNELS").as_deref() == Ok("1") {
+        if std::env::var("DX_AUTOSTART_CHANNELS").as_deref() == Ok("1") {
             channels::start_channels(config).await?;
         }
         return Ok(());
@@ -832,7 +832,7 @@ async fn main() -> Result<()> {
         let (_validator, enrollment_uri) =
             security::OtpValidator::from_config(&config.security.otp, config_dir, &store)?;
         if let Some(uri) = enrollment_uri {
-            println!("Initialized OTP secret for ZeroClaw.");
+            println!("Initialized OTP secret for DX.");
             println!("Enrollment URI: {uri}");
         }
     }
@@ -904,9 +904,9 @@ async fn main() -> Result<()> {
             let port = port.unwrap_or(config.gateway.port);
             let host = host.unwrap_or_else(|| config.gateway.host.clone());
             if port == 0 {
-                info!("🚀 Starting ZeroClaw Gateway on {host} (random port)");
+                info!("🚀 Starting DX Gateway on {host} (random port)");
             } else {
-                info!("🚀 Starting ZeroClaw Gateway on {host}:{port}");
+                info!("🚀 Starting DX Gateway on {host}:{port}");
             }
             gateway::run_gateway(&host, port, config).await
         }
@@ -915,15 +915,15 @@ async fn main() -> Result<()> {
             let port = port.unwrap_or(config.gateway.port);
             let host = host.unwrap_or_else(|| config.gateway.host.clone());
             if port == 0 {
-                info!("🧠 Starting ZeroClaw Daemon on {host} (random port)");
+                info!("🧠 Starting DX Daemon on {host} (random port)");
             } else {
-                info!("🧠 Starting ZeroClaw Daemon on {host}:{port}");
+                info!("🧠 Starting DX Daemon on {host}:{port}");
             }
             daemon::run(config, host, port).await
         }
 
         Commands::Status => {
-            println!("🦀 ZeroClaw Status");
+            println!("🚀 DX Status");
             println!();
             println!("Version:     {}", env!("CARGO_PKG_VERSION"));
             println!("Workspace:   {}", config.workspace_dir.display());
@@ -1204,7 +1204,7 @@ fn handle_estop_command(
                 let (validator, enrollment_uri) =
                     security::OtpValidator::from_config(&config.security.otp, config_dir, &store)?;
                 if let Some(uri) = enrollment_uri {
-                    println!("Initialized OTP secret for ZeroClaw.");
+                    println!("Initialized OTP secret for DX.");
                     println!("Enrollment URI: {uri}");
                 }
                 Some(validator)
@@ -1578,7 +1578,7 @@ async fn handle_auth_command(auth_command: AuthCommands, config: &Config) -> Res
                         Err(e) => {
                             println!("Callback capture failed: {e}");
                             println!(
-                                "Run `zeroclaw auth paste-redirect --provider gemini --profile {profile}`"
+                                "Run `dx auth paste-redirect --provider gemini --profile {profile}`"
                             );
                             return Ok(());
                         }
@@ -1663,7 +1663,7 @@ async fn handle_auth_command(auth_command: AuthCommands, config: &Config) -> Res
                         Err(e) => {
                             println!("Callback capture failed: {e}");
                             println!(
-                                "Run `zeroclaw auth paste-redirect --provider openai-codex --profile {profile}`"
+                                "Run `dx auth paste-redirect --provider openai-codex --profile {profile}`"
                             );
                             return Ok(());
                         }
@@ -1701,7 +1701,7 @@ async fn handle_auth_command(auth_command: AuthCommands, config: &Config) -> Res
                 "openai-codex" => {
                     let pending = load_pending_oauth_login(config, "openai")?.ok_or_else(|| {
                         anyhow::anyhow!(
-                            "No pending OpenAI login found. Run `zeroclaw auth login --provider openai-codex` first."
+                            "No pending OpenAI login found. Run `dx auth login --provider openai-codex` first."
                         )
                     })?;
 
@@ -1745,7 +1745,7 @@ async fn handle_auth_command(auth_command: AuthCommands, config: &Config) -> Res
                 "gemini" => {
                     let pending = load_pending_oauth_login(config, "gemini")?.ok_or_else(|| {
                         anyhow::anyhow!(
-                            "No pending Gemini login found. Run `zeroclaw auth login --provider gemini` first."
+                            "No pending Gemini login found. Run `dx auth login --provider gemini` first."
                         )
                     })?;
 
@@ -1863,7 +1863,7 @@ async fn handle_auth_command(auth_command: AuthCommands, config: &Config) -> Res
                         }
                         None => {
                             bail!(
-                                "No OpenAI Codex auth profile found. Run `zeroclaw auth login --provider openai-codex`."
+                                "No OpenAI Codex auth profile found. Run `dx auth login --provider openai-codex`."
                             )
                         }
                     }
@@ -1881,7 +1881,7 @@ async fn handle_auth_command(auth_command: AuthCommands, config: &Config) -> Res
                         }
                         None => {
                             bail!(
-                                "No Gemini auth profile found. Run `zeroclaw auth login --provider gemini`."
+                                "No Gemini auth profile found. Run `dx auth login --provider gemini`."
                             )
                         }
                     }
@@ -1992,7 +1992,7 @@ mod tests {
     #[test]
     fn onboard_cli_accepts_model_provider_and_api_key_in_quick_mode() {
         let cli = Cli::try_parse_from([
-            "zeroclaw",
+            "dx",
             "onboard",
             "--provider",
             "openrouter",
@@ -2027,7 +2027,7 @@ mod tests {
     #[test]
     fn completions_cli_parses_supported_shells() {
         for shell in ["bash", "fish", "zsh", "powershell", "elvish"] {
-            let cli = Cli::try_parse_from(["zeroclaw", "completions", shell])
+            let cli = Cli::try_parse_from(["dx", "completions", shell])
                 .expect("completions invocation should parse");
             match cli.command {
                 Commands::Completions { .. } => {}
@@ -2056,7 +2056,7 @@ mod tests {
 
     #[test]
     fn gateway_cli_accepts_new_pairing_flag() {
-        let cli = Cli::try_parse_from(["zeroclaw", "gateway", "--new-pairing"])
+        let cli = Cli::try_parse_from(["dx", "gateway", "--new-pairing"])
             .expect("gateway --new-pairing should parse");
 
         match cli.command {
@@ -2067,7 +2067,7 @@ mod tests {
 
     #[test]
     fn gateway_cli_defaults_new_pairing_to_false() {
-        let cli = Cli::try_parse_from(["zeroclaw", "gateway"]).expect("gateway should parse");
+        let cli = Cli::try_parse_from(["dx", "gateway"]).expect("gateway should parse");
 
         match cli.command {
             Commands::Gateway { new_pairing, .. } => assert!(!new_pairing),
@@ -2082,14 +2082,14 @@ mod tests {
             .expect("completion generation should succeed");
         let script = String::from_utf8(output).expect("completion output should be valid utf-8");
         assert!(
-            script.contains("zeroclaw"),
+            script.contains("dx"),
             "completion script should reference binary name"
         );
     }
 
     #[test]
     fn onboard_cli_accepts_force_flag() {
-        let cli = Cli::try_parse_from(["zeroclaw", "onboard", "--force"])
+        let cli = Cli::try_parse_from(["dx", "onboard", "--force"])
             .expect("onboard --force should parse");
 
         match cli.command {
@@ -2100,7 +2100,7 @@ mod tests {
 
     #[test]
     fn onboard_cli_accepts_no_totp_flag() {
-        let cli = Cli::try_parse_from(["zeroclaw", "onboard", "--no-totp"])
+        let cli = Cli::try_parse_from(["dx", "onboard", "--no-totp"])
             .expect("onboard --no-totp should parse");
 
         match cli.command {
@@ -2111,7 +2111,7 @@ mod tests {
 
     #[test]
     fn cli_parses_estop_default_engage() {
-        let cli = Cli::try_parse_from(["zeroclaw", "estop"]).expect("estop command should parse");
+        let cli = Cli::try_parse_from(["dx", "estop"]).expect("estop command should parse");
 
         match cli.command {
             Commands::Estop {
@@ -2131,7 +2131,7 @@ mod tests {
 
     #[test]
     fn cli_parses_estop_resume_domain() {
-        let cli = Cli::try_parse_from(["zeroclaw", "estop", "resume", "--domain", "*.chase.com"])
+        let cli = Cli::try_parse_from(["dx", "estop", "resume", "--domain", "*.chase.com"])
             .expect("estop resume command should parse");
 
         match cli.command {

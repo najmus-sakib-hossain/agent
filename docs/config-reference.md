@@ -1,4 +1,4 @@
-# ZeroClaw Config Reference (Operator-Oriented)
+# DX Config Reference (Operator-Oriented)
 
 This is a high-signal reference for common config sections and defaults.
 
@@ -7,16 +7,16 @@ Last verified: **February 25, 2026**.
 Config path resolution at startup:
 
 1. `ZEROCLAW_WORKSPACE` override (if set)
-2. persisted `~/.zeroclaw/active_workspace.toml` marker (if present)
-3. default `~/.zeroclaw/config.toml`
+2. persisted `~/.dx/active_workspace.toml` marker (if present)
+3. default `~/.dx/config.toml`
 
-ZeroClaw logs the resolved config on startup at `INFO` level:
+DX logs the resolved config on startup at `INFO` level:
 
 - `Config loaded` with fields: `path`, `workspace`, `source`, `initialized`
 
 Schema export command:
 
-- `zeroclaw config schema` (prints JSON Schema draft 2020-12 to stdout)
+- `dx config schema` (prints JSON Schema draft 2020-12 to stdout)
 
 ## Core Keys
 
@@ -41,7 +41,7 @@ Notes:
 |---|---|---|
 | `backend` | `none` | Observability backend: `none`, `noop`, `log`, `prometheus`, `otel`, `opentelemetry`, or `otlp` |
 | `otel_endpoint` | `http://localhost:4318` | OTLP HTTP endpoint used when backend is `otel` |
-| `otel_service_name` | `zeroclaw` | Service name emitted to OTLP collector |
+| `otel_service_name` | `dx` | Service name emitted to OTLP collector |
 | `runtime_trace_mode` | `none` | Runtime trace storage mode: `none`, `rolling`, or `full` |
 | `runtime_trace_path` | `state/runtime-trace.jsonl` | Runtime trace JSONL path (relative to workspace unless absolute) |
 | `runtime_trace_max_entries` | `200` | Maximum retained events when `runtime_trace_mode = "rolling"` |
@@ -52,9 +52,9 @@ Notes:
 - Alias values `opentelemetry` and `otlp` map to the same OTel backend.
 - Runtime traces are intended for debugging tool-call failures and malformed model tool payloads. They can contain model output text, so keep this disabled by default on shared hosts.
 - Query runtime traces with:
-  - `zeroclaw doctor traces --limit 20`
-  - `zeroclaw doctor traces --event tool_call_result --contains \"error\"`
-  - `zeroclaw doctor traces --id <trace-id>`
+  - `dx doctor traces --limit 20`
+  - `dx doctor traces --event tool_call_result --contains \"error\"`
+  - `dx doctor traces --id <trace-id>`
 
 Example:
 
@@ -62,7 +62,7 @@ Example:
 [observability]
 backend = "otel"
 otel_endpoint = "http://localhost:4318"
-otel_service_name = "zeroclaw"
+otel_service_name = "dx"
 runtime_trace_mode = "rolling"
 runtime_trace_path = "state/runtime-trace.jsonl"
 runtime_trace_max_entries = 200
@@ -123,7 +123,7 @@ Notes:
 - Domain patterns support wildcard `*`.
 - Category presets expand to curated domain sets during validation.
 - Invalid domain globs or unknown categories fail fast at startup.
-- When `enabled = true` and no OTP secret exists, ZeroClaw generates one and prints an enrollment URI once.
+- When `enabled = true` and no OTP secret exists, DX generates one and prints an enrollment URI once.
 
 Example:
 
@@ -143,14 +143,14 @@ gated_domain_categories = ["banking"]
 | Key | Default | Purpose |
 |---|---|---|
 | `enabled` | `false` | Enable emergency-stop state machine and CLI |
-| `state_file` | `~/.zeroclaw/estop-state.json` | Persistent estop state path |
+| `state_file` | `~/.dx/estop-state.json` | Persistent estop state path |
 | `require_otp_to_resume` | `true` | Require OTP validation before resume operations |
 
 Notes:
 
 - Estop state is persisted atomically and reloaded on startup.
 - Corrupted/unreadable estop state falls back to fail-closed `kill_all`.
-- Use CLI command `zeroclaw estop` to engage and `zeroclaw estop resume` to clear levels.
+- Use CLI command `dx estop` to engage and `dx estop resume` to clear levels.
 
 ## `[security.url_access]`
 
@@ -480,14 +480,14 @@ Notes:
 
 Notes:
 
-- Security-first default: ZeroClaw does **not** clone or sync `open-skills` unless `open_skills_enabled = true`.
+- Security-first default: DX does **not** clone or sync `open-skills` unless `open_skills_enabled = true`.
 - Environment overrides:
   - `ZEROCLAW_OPEN_SKILLS_ENABLED` accepts `1/0`, `true/false`, `yes/no`, `on/off`.
   - `ZEROCLAW_OPEN_SKILLS_DIR` overrides the repository path when non-empty.
   - `ZEROCLAW_SKILLS_PROMPT_MODE` accepts `full` or `compact`.
 - Precedence for enable flag: `ZEROCLAW_OPEN_SKILLS_ENABLED` → `skills.open_skills_enabled` in `config.toml` → default `false`.
 - `prompt_injection_mode = "compact"` is recommended on low-context local models to reduce startup prompt size while keeping skill files available on demand.
-- Skill loading and `zeroclaw skills install` both apply a static security audit. Skills that contain symlinks, script-like files, high-risk shell payload snippets, or unsafe markdown link traversal are rejected.
+- Skill loading and `dx skills install` both apply a static security audit. Skills that contain symlinks, script-like files, high-risk shell payload snippets, or unsafe markdown link traversal are rejected.
 - `clawhub_token` is sent as `Authorization: Bearer <token>` when downloading from ClawhHub. Obtain a token from [https://clawhub.ai](https://clawhub.ai) after signing in. Required if the API returns 429 (rate-limited) or 401 (unauthorized) for anonymous requests.
 
 **ClawhHub token example:**
@@ -509,7 +509,7 @@ Notes:
 
 - Backward compatibility: legacy `enable = true` is accepted as an alias for `enabled = true`.
 - If `enabled = false` or `api_key` is missing, the `composio` tool is not registered.
-- ZeroClaw requests Composio v3 tools with `toolkit_versions=latest` and executes tools with `version="latest"` to avoid stale default tool revisions.
+- DX requests Composio v3 tools with `toolkit_versions=latest` and executes tools with `version="latest"` to avoid stale default tool revisions.
 - Typical flow: call `connect`, complete browser OAuth, then run `execute` for the desired tool action.
 - If Composio returns a missing connected-account reference error, call `list_accounts` (optionally with `app`) and pass the returned `connected_account_id` to `execute`.
 
@@ -604,7 +604,7 @@ Notes:
 | `allowed_domains` | `[]` | Allowed domains for HTTP requests (exact/subdomain match, or `"*"` for all public domains) |
 | `max_response_size` | `1000000` | Maximum response size in bytes (default: 1 MB) |
 | `timeout_secs` | `30` | Request timeout in seconds |
-| `user_agent` | `ZeroClaw/1.0` | User-Agent header for outbound HTTP requests |
+| `user_agent` | `DX/1.0` | User-Agent header for outbound HTTP requests |
 
 Notes:
 
@@ -625,7 +625,7 @@ Notes:
 | `blocked_domains` | `[]` | Denylist applied before allowlist |
 | `max_response_size` | `500000` | Maximum returned payload size in bytes |
 | `timeout_secs` | `30` | Request timeout in seconds |
-| `user_agent` | `ZeroClaw/1.0` | User-Agent header for fetch requests |
+| `user_agent` | `DX/1.0` | User-Agent header for fetch requests |
 
 Notes:
 
@@ -659,7 +659,7 @@ Notes:
 | `jina_site_filters` | `[]` | Optional site filters for Jina search |
 | `max_results` | `5` | Maximum search results returned (must be 1-10) |
 | `timeout_secs` | `15` | Request timeout in seconds |
-| `user_agent` | `ZeroClaw/1.0` | User-Agent header for search requests |
+| `user_agent` | `DX/1.0` | User-Agent header for search requests |
 
 Notes:
 
@@ -873,7 +873,7 @@ Upgrade strategy:
 
 1. Keep hints stable (`hint:reasoning`, `hint:semantic`).
 2. Update only `model = "...new-version..."` in the route entries.
-3. Validate with `zeroclaw doctor` before restart/rollout.
+3. Validate with `dx doctor` before restart/rollout.
 
 Natural-language config path:
 
@@ -957,7 +957,7 @@ Notes:
   - `allowed_users` allowlist checks still run first
 - Legacy `mention_only` flags (Telegram/Discord/Mattermost/Lark) remain supported as fallback only.
   If `group_reply.mode` is set, it takes precedence over legacy `mention_only`.
-- While `zeroclaw channel start` is running, updates to `default_provider`, `default_model`, `default_temperature`, `api_key`, `api_url`, and `reliability.*` are hot-applied from `config.toml` on the next inbound message.
+- While `dx channel start` is running, updates to `default_provider`, `default_model`, `default_temperature`, `api_key`, `api_url`, and `reliability.*` are hot-applied from `config.toml` on the next inbound message.
 
 ### `[channels_config.nostr]`
 
@@ -1098,12 +1098,12 @@ Notes:
 
 ## `[agents_ipc]`
 
-Inter-process communication for independent ZeroClaw agents on the same host.
+Inter-process communication for independent DX agents on the same host.
 
 | Key | Default | Purpose |
 |---|---|---|
 | `enabled` | `false` | Enable IPC tools (`agents_list`, `agents_send`, `agents_inbox`, `state_get`, `state_set`) |
-| `db_path` | `~/.zeroclaw/agents.db` | Shared SQLite database path (all agents on this host share one file) |
+| `db_path` | `~/.dx/agents.db` | Shared SQLite database path (all agents on this host share one file) |
 | `staleness_secs` | `300` | Agents not seen within this window are considered offline (seconds) |
 
 Notes:
@@ -1117,7 +1117,7 @@ Example:
 ```toml
 [agents_ipc]
 enabled = true
-db_path = "~/.zeroclaw/agents.db"
+db_path = "~/.dx/agents.db"
 staleness_secs = 300
 ```
 
@@ -1132,10 +1132,10 @@ staleness_secs = 300
 After editing config:
 
 ```bash
-zeroclaw status
-zeroclaw doctor
-zeroclaw channel doctor
-zeroclaw service restart
+dx status
+dx doctor
+dx channel doctor
+dx service restart
 ```
 
 ## Related Docs

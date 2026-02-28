@@ -4,16 +4,16 @@ This page is the evergreen security statement for community safety and impersona
 
 ## Fraud Warning
 
-Scammers may impersonate ZeroClaw maintainers, contributors, or community members.
+Scammers may impersonate DX maintainers, contributors, or community members.
 
-Assume fraud if someone claiming to represent ZeroClaw asks for:
+Assume fraud if someone claiming to represent DX asks for:
 
 - cryptocurrency transfers
 - wallet access or seed phrases
 - private financial information
 - private credentials outside official security reporting flow
 
-ZeroClaw maintainers do not request money or private wallet/financial credentials via direct messages.
+DX maintainers do not request money or private wallet/financial credentials via direct messages.
 
 ## Official Sources Of Truth
 

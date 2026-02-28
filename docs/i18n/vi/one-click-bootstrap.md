@@ -1,20 +1,20 @@
 # Cài đặt một lệnh
 
-Cách cài đặt và khởi tạo ZeroClaw nhanh nhất.
+Cách cài đặt và khởi tạo DX nhanh nhất.
 
 Xác minh lần cuối: **2026-02-20**.
 
 ## Cách 0: Homebrew (macOS/Linuxbrew)
 
 ```bash
-brew install zeroclaw
+brew install dx
 ```
 
 ## Cách A (Khuyến nghị): Clone + chạy script cục bộ
 
 ```bash
 git clone https://github.com/zeroclaw-labs/zeroclaw.git
-cd zeroclaw
+cd dx
 ./bootstrap.sh
 ```
 
@@ -50,7 +50,7 @@ Bỏ qua binary dựng sẵn, buộc build từ mã nguồn:
 
 ## Bootstrap kép
 
-Mặc định là **chỉ ứng dụng** (build/cài ZeroClaw), yêu cầu Rust toolchain sẵn có.
+Mặc định là **chỉ ứng dụng** (build/cài DX), yêu cầu Rust toolchain sẵn có.
 
 Với máy mới, bật bootstrap môi trường:
 
@@ -92,7 +92,7 @@ Nếu chạy Cách B ngoài thư mục repo, bootstrap script sẽ tự clone wo
 ./bootstrap.sh --docker
 ```
 
-Lệnh này build image ZeroClaw cục bộ và chạy thiết lập trong container, lưu config/workspace vào `./.zeroclaw-docker`.
+Lệnh này build image DX cục bộ và chạy thiết lập trong container, lưu config/workspace vào `./.dx-docker`.
 
 ### Thiết lập nhanh (không tương tác)
 

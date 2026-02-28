@@ -2249,7 +2249,7 @@ mod tests {
     #[test]
     fn resolved_path_blocks_root_escape() {
         let policy = SecurityPolicy {
-            workspace_dir: PathBuf::from("/home/zeroclaw_user/project"),
+            workspace_dir: PathBuf::from("/home/dx_user/project"),
             ..SecurityPolicy::default()
         };
 

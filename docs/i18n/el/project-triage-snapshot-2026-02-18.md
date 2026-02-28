@@ -1,4 +1,4 @@
-# Αναφορά Διαλογής Έργου ZeroClaw (Project Triage Snapshot)
+# Αναφορά Διαλογής Έργου DX (Project Triage Snapshot)
 
 **Ημερομηνία Αναφοράς**: 18 Φεβρουαρίου 2026
 

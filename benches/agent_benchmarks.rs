@@ -1,4 +1,4 @@
-//! Performance benchmarks for ZeroClaw hot paths.
+//! Performance benchmarks for DX hot paths.
 //!
 //! Benchmarks cover:
 //!   - Tool dispatch (XML parsing, native parsing)
@@ -13,14 +13,14 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::hint::black_box;
 use std::sync::{Arc, Mutex};
 
-use zeroclaw::agent::agent::Agent;
-use zeroclaw::agent::dispatcher::{NativeToolDispatcher, ToolDispatcher, XmlToolDispatcher};
-use zeroclaw::config::MemoryConfig;
-use zeroclaw::memory;
-use zeroclaw::memory::{Memory, MemoryCategory};
-use zeroclaw::observability::{NoopObserver, Observer};
-use zeroclaw::providers::{ChatRequest, ChatResponse, Provider, ToolCall};
-use zeroclaw::tools::{Tool, ToolResult};
+use dx::agent::agent::Agent;
+use dx::agent::dispatcher::{NativeToolDispatcher, ToolDispatcher, XmlToolDispatcher};
+use dx::config::MemoryConfig;
+use dx::memory;
+use dx::memory::{Memory, MemoryCategory};
+use dx::observability::{NoopObserver, Observer};
+use dx::providers::{ChatRequest, ChatResponse, Provider, ToolCall};
+use dx::tools::{Tool, ToolResult};
 
 use anyhow::Result;
 use async_trait::async_trait;
@@ -203,7 +203,7 @@ fn bench_native_parsing(c: &mut Criterion) {
             ToolCall {
                 id: "tc1".into(),
                 name: "search".into(),
-                arguments: r#"{"query": "zeroclaw"}"#.into(),
+                arguments: r#"{"query": "dx"}"#.into(),
             },
             ToolCall {
                 id: "tc2".into(),

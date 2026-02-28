@@ -1,6 +1,6 @@
-# OpenClaw → ZeroClaw Migration Guide
+# OpenClaw → DX Migration Guide
 
-This guide walks you through migrating an OpenClaw deployment to ZeroClaw. It covers configuration conversion, endpoint changes, and the architectural differences you need to know.
+This guide walks you through migrating an OpenClaw deployment to DX. It covers configuration conversion, endpoint changes, and the architectural differences you need to know.
 
 ## Quick Start
 
@@ -8,7 +8,7 @@ This guide walks you through migrating an OpenClaw deployment to ZeroClaw. It co
 # 1. Convert your OpenClaw config
 python scripts/convert-openclaw-config.py ~/.openclaw/openclaw.json -o config.toml
 
-# 2. The compatibility layer is built into ZeroClaw — no files to copy.
+# 2. The compatibility layer is built into DX — no files to copy.
 #    The endpoints are implemented in src/gateway/openclaw_compat.rs and
 #    are already wired into the router in src/gateway/mod.rs.
 
@@ -22,7 +22,7 @@ cargo build --release
 
 OpenClaw was designed as an **OpenAI-compatible API server**. You called it like a remote LLM — send `messages[]`, get a completion back. The gateway was essentially a proxy that added system prompts and tool capabilities.
 
-ZeroClaw is a **standalone messaging gateway**. It owns the full agent loop internally. Channels (WhatsApp, Linq, Nextcloud Talk) send a single message string, and ZeroClaw handles everything: system prompt construction, tool invocation, memory recall, context enrichment, and response generation.
+DX is a **standalone messaging gateway**. It owns the full agent loop internally. Channels (WhatsApp, Linq, Nextcloud Talk) send a single message string, and DX handles everything: system prompt construction, tool invocation, memory recall, context enrichment, and response generation.
 
 This means there's no built-in `/v1/chat/completions` endpoint that runs the full agent loop. The one that exists in `openai_compat.rs` uses a simpler chat path without tools or memory.
 
@@ -32,7 +32,7 @@ Two new endpoints that bridge the gap:
 
 | Endpoint | Format | Agent Loop | Use Case |
 |----------|--------|------------|----------|
-| `POST /api/chat` | ZeroClaw-native JSON | Full (with tools + memory) | **Recommended** for new integrations |
+| `POST /api/chat` | DX-native JSON | Full (with tools + memory) | **Recommended** for new integrations |
 | `POST /v1/chat/completions` | OpenAI-compatible | Full (with tools + memory) | **Drop-in compat** for existing callers |
 
 Both endpoints route through `run_gateway_chat_with_tools` → `agent::process_message`, which is the same code path used by Linq, WhatsApp, and all native channels.
@@ -43,7 +43,7 @@ Both endpoints route through `run_gateway_chat_with_tools` → `agent::process_m
 
 ### POST /api/chat (Recommended)
 
-The clean, ZeroClaw-native endpoint.
+The clean, DX-native endpoint.
 
 **Request:**
 ```json
@@ -115,7 +115,7 @@ Drop-in replacement for OpenAI-compatible callers. Accepts standard OpenAI forma
 
 ### Provider & Model
 
-| OpenClaw (JSON) | ZeroClaw (TOML) |
+| OpenClaw (JSON) | DX (TOML) |
 |-----------------|-----------------|
 | `agent.model = "anthropic/claude-opus-4-6"` | `default_provider = "anthropic"` + `default_model = "claude-opus-4-6"` |
 | `agent.model = "openai/gpt-4o"` | `default_provider = "openai"` + `default_model = "gpt-4o"` |
@@ -129,7 +129,7 @@ default_model = "us.anthropic.claude-sonnet-4-6"
 
 ### Gateway
 
-| OpenClaw | ZeroClaw |
+| OpenClaw | DX |
 |----------|----------|
 | `gateway.port = 18789` | `[gateway]` `port = 42617` |
 | `gateway.bind = "127.0.0.1"` | `[gateway]` `host = "127.0.0.1"` |
@@ -137,7 +137,7 @@ default_model = "us.anthropic.claude-sonnet-4-6"
 
 ### Memory
 
-OpenClaw stores state in `~/.openclaw/`. ZeroClaw uses configurable backends:
+OpenClaw stores state in `~/.openclaw/`. DX uses configurable backends:
 
 ```toml
 [memory]
@@ -151,7 +151,7 @@ keyword_weight = 0.3            # weight for BM25 keyword search
 
 ### Channels
 
-| OpenClaw Channel | ZeroClaw Status |
+| OpenClaw Channel | DX Status |
 |------------------|-----------------|
 | WhatsApp | ✅ Native (`/whatsapp`) |
 | Telegram | ✅ Native (channels_config) |
@@ -167,7 +167,7 @@ keyword_weight = 0.3            # weight for BM25 keyword search
 | MS Teams | ❌ Use /api/chat bridge |
 | WebChat | ❌ Use /api/chat or /v1/chat/completions |
 
-For unsupported channels, point your existing integration at ZeroClaw's `/api/chat` endpoint instead of OpenClaw's `/v1/chat/completions`.
+For unsupported channels, point your existing integration at DX's `/api/chat` endpoint instead of OpenClaw's `/v1/chat/completions`.
 
 ---
 
@@ -213,7 +213,7 @@ const reply = data.reply;
 ### After — Option B: Use /v1/chat/completions (Zero Code Changes)
 
 ```typescript
-// Same code as before — just point to ZeroClaw host with gateway token.
+// Same code as before — just point to DX host with gateway token.
 // The compat shim handles the translation.
 const response = await fetch(`https://${host}/v1/chat/completions`, {
   method: "POST",
@@ -232,7 +232,7 @@ const response = await fetch(`https://${host}/v1/chat/completions`, {
 
 ## Conversation Context: What to Know
 
-ZeroClaw's `process_message` starts fresh on each call. It uses **semantic memory recall** (SQLite hybrid search with embeddings + BM25) to surface relevant past context, not ordered conversation history.
+DX's `process_message` starts fresh on each call. It uses **semantic memory recall** (SQLite hybrid search with embeddings + BM25) to surface relevant past context, not ordered conversation history.
 
 What this means in practice:
 
@@ -246,7 +246,7 @@ What this means in practice:
 - `/api/chat`: Use the `context` array field
 - `/v1/chat/completions`: The shim automatically extracts the last 10 messages from the `messages[]` array and prepends them as context
 
-For full conversation history support, a follow-up change to ZeroClaw's agent loop would be needed to accept a `messages[]` parameter directly.
+For full conversation history support, a follow-up change to DX's agent loop would be needed to accept a `messages[]` parameter directly.
 
 ---
 
@@ -257,7 +257,7 @@ For full conversation history support, a follow-up change to ZeroClaw's agent lo
 python scripts/convert-openclaw-config.py ~/.openclaw/openclaw.json
 
 # Specify output path
-python scripts/convert-openclaw-config.py ~/.openclaw/openclaw.json -o ~/.zeroclaw/config.toml
+python scripts/convert-openclaw-config.py ~/.openclaw/openclaw.json -o ~/.dx/config.toml
 
 # Preview without writing
 python scripts/convert-openclaw-config.py ~/.openclaw/openclaw.json --dry-run
@@ -284,7 +284,7 @@ The converter handles: provider/model parsing, gateway settings, memory defaults
 
 ## Troubleshooting
 
-**405 on /v1/chat/completions:** The endpoint isn't registered. Make sure you're running a ZeroClaw build that includes the `openclaw_compat` module (check `src/gateway/mod.rs` for the route registration).
+**405 on /v1/chat/completions:** The endpoint isn't registered. Make sure you're running a DX build that includes the `openclaw_compat` module (check `src/gateway/mod.rs` for the route registration).
 
 **401 Unauthorized:** Pairing is enabled but you're not sending a valid bearer token. Run the `/pair` flow first.
 

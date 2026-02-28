@@ -691,7 +691,7 @@ pub struct ProviderRuntimeOptions {
     pub auth_profile_override: Option<String>,
     pub provider_api_url: Option<String>,
     pub provider_transport: Option<String>,
-    pub zeroclaw_dir: Option<PathBuf>,
+    pub dx_dir: Option<PathBuf>,
     pub secrets_encrypt: bool,
     pub reasoning_enabled: Option<bool>,
     pub reasoning_level: Option<String>,
@@ -706,7 +706,7 @@ impl Default for ProviderRuntimeOptions {
             auth_profile_override: None,
             provider_api_url: None,
             provider_transport: None,
-            zeroclaw_dir: None,
+            dx_dir: None,
             secrets_encrypt: true,
             reasoning_enabled: None,
             reasoning_level: None,
@@ -827,7 +827,7 @@ pub async fn api_error(provider: &str, response: reqwest::Response) -> anyhow::E
 /// Resolution order:
 /// 1. Explicitly provided `api_key` parameter (trimmed, filtered if empty)
 /// 2. Provider-specific environment variable (e.g., `ANTHROPIC_OAUTH_TOKEN`, `OPENROUTER_API_KEY`)
-/// 3. Generic fallback variables (`ZEROCLAW_API_KEY`, `API_KEY`)
+/// 3. Generic fallback variables (`DX_API_KEY`, `API_KEY`)
 ///
 /// For Anthropic, the provider-specific env var is `ANTHROPIC_OAUTH_TOKEN` (for setup-tokens)
 /// followed by `ANTHROPIC_API_KEY` (for regular API keys).
@@ -918,7 +918,7 @@ fn resolve_provider_credential(name: &str, credential_override: Option<&str>) ->
         return None;
     }
 
-    for env_var in ["ZEROCLAW_API_KEY", "API_KEY"] {
+    for env_var in ["DX_API_KEY", "API_KEY"] {
         if let Ok(value) = std::env::var(env_var) {
             let value = value.trim();
             if !value.is_empty() {
@@ -1081,12 +1081,12 @@ fn create_provider_with_url_and_options(
         ))),
         "gemini" | "google" | "google-gemini" => {
             let state_dir = options
-                .zeroclaw_dir
+                .dx_dir
                 .clone()
                 .unwrap_or_else(|| {
                     directories::UserDirs::new().map_or_else(
-                        || PathBuf::from(".zeroclaw"),
-                        |dirs| dirs.home_dir().join(".zeroclaw"),
+                        || PathBuf::from(".dx"),
+                        |dirs| dirs.home_dir().join(".dx"),
                     )
                 });
             let auth_service = AuthService::new(&state_dir, options.secrets_encrypt);
@@ -1359,7 +1359,7 @@ fn create_provider_with_url_and_options(
         }
 
         _ => anyhow::bail!(
-            "Unknown provider: {name}. Check README for supported providers or run `zeroclaw onboard --interactive` to reconfigure.\n\
+            "Unknown provider: {name}. Check README for supported providers or run `dx onboard --interactive` to reconfigure.\n\
              Tip: Use \"custom:https://your-api.com\" for OpenAI-compatible endpoints.\n\
              Tip: Use \"anthropic-custom:https://your-api.com\" for Anthropic-compatible endpoints."
         ),
@@ -1590,7 +1590,7 @@ pub struct ProviderInfo {
     pub local: bool,
 }
 
-/// Return the list of all known providers for display in `zeroclaw providers list`.
+/// Return the list of all known providers for display in `dx providers list`.
 ///
 /// This is intentionally separate from the factory match in `create_provider`
 /// (display concern vs. construction concern).
@@ -1947,7 +1947,7 @@ mod tests {
     #[test]
     fn resolve_qwen_oauth_context_prefers_explicit_override() {
         let _env_lock = env_lock();
-        let fake_home = format!("/tmp/zeroclaw-qwen-oauth-home-{}", std::process::id());
+        let fake_home = format!("/tmp/dx-qwen-oauth-home-{}", std::process::id());
         let _home_guard = EnvGuard::set("HOME", Some(fake_home.as_str()));
         let _token_guard = EnvGuard::set(QWEN_OAUTH_TOKEN_ENV, Some("oauth-token"));
         let _resource_guard = EnvGuard::set(
@@ -1964,7 +1964,7 @@ mod tests {
     #[test]
     fn resolve_qwen_oauth_context_uses_env_token_and_resource_url() {
         let _env_lock = env_lock();
-        let fake_home = format!("/tmp/zeroclaw-qwen-oauth-home-{}-env", std::process::id());
+        let fake_home = format!("/tmp/dx-qwen-oauth-home-{}-env", std::process::id());
         let _home_guard = EnvGuard::set("HOME", Some(fake_home.as_str()));
         let _token_guard = EnvGuard::set(QWEN_OAUTH_TOKEN_ENV, Some("oauth-token"));
         let _refresh_guard = EnvGuard::set(QWEN_OAUTH_REFRESH_TOKEN_ENV, None);
@@ -1986,7 +1986,7 @@ mod tests {
     #[test]
     fn resolve_qwen_oauth_context_reads_cached_credentials_file() {
         let _env_lock = env_lock();
-        let fake_home = format!("/tmp/zeroclaw-qwen-oauth-home-{}-file", std::process::id());
+        let fake_home = format!("/tmp/dx-qwen-oauth-home-{}-file", std::process::id());
         let creds_dir = PathBuf::from(&fake_home).join(".qwen");
         std::fs::create_dir_all(&creds_dir).unwrap();
         let creds_path = creds_dir.join("oauth_creds.json");
@@ -2015,7 +2015,7 @@ mod tests {
     fn resolve_qwen_oauth_context_placeholder_does_not_use_dashscope_fallback() {
         let _env_lock = env_lock();
         let fake_home = format!(
-            "/tmp/zeroclaw-qwen-oauth-home-{}-placeholder",
+            "/tmp/dx-qwen-oauth-home-{}-placeholder",
             std::process::id()
         );
         let _home_guard = EnvGuard::set("HOME", Some(fake_home.as_str()));
@@ -2033,7 +2033,7 @@ mod tests {
     fn provider_credential_available_qwen_oauth_accepts_refresh_token_without_live_refresh() {
         let _env_lock = env_lock();
         let fake_home = format!(
-            "/tmp/zeroclaw-qwen-oauth-home-{}-available-refresh",
+            "/tmp/dx-qwen-oauth-home-{}-available-refresh",
             std::process::id()
         );
         let _home_guard = EnvGuard::set("HOME", Some(fake_home.as_str()));
@@ -2052,7 +2052,7 @@ mod tests {
     fn provider_credential_available_qwen_oauth_rejects_placeholder_without_sources() {
         let _env_lock = env_lock();
         let fake_home = format!(
-            "/tmp/zeroclaw-qwen-oauth-home-{}-available-none",
+            "/tmp/dx-qwen-oauth-home-{}-available-none",
             std::process::id()
         );
         let _home_guard = EnvGuard::set("HOME", Some(fake_home.as_str()));

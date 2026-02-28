@@ -1,6 +1,6 @@
 # Channels Reference
 
-This document is the canonical reference for channel configuration in ZeroClaw.
+This document is the canonical reference for channel configuration in DX.
 
 For encrypted Matrix rooms, also read the dedicated runbook:
 - [Matrix E2EE Guide](./matrix-e2ee-guide.md)
@@ -22,13 +22,13 @@ This is the most common symptom (same class as issue #499). Check these in order
 3. **Token/account mismatch**: token is valid but belongs to another Matrix account.
 4. **E2EE device identity gap**: `whoami` does not return `device_id` and config does not provide one.
 5. **Key sharing/trust gap**: room keys were not shared to the bot device, so encrypted events cannot be decrypted.
-6. **Stale runtime state**: config changed but `zeroclaw daemon` was not restarted.
+6. **Stale runtime state**: config changed but `dx daemon` was not restarted.
 
 ---
 
 ## 1. Configuration Namespace
 
-All channel settings live under `channels_config` in `~/.zeroclaw/config.toml`.
+All channel settings live under `channels_config` in `~/.dx/config.toml`.
 
 ```toml
 [channels_config]
@@ -37,14 +37,14 @@ cli = true
 
 Each channel is enabled by creating its sub-table (for example, `[channels_config.telegram]`).
 
-One ZeroClaw runtime can serve multiple channels at once: if you configure several
-channel sub-tables, `zeroclaw channel start` launches all of them in the same process.
+One DX runtime can serve multiple channels at once: if you configure several
+channel sub-tables, `dx channel start` launches all of them in the same process.
 Channel startup is best-effort: a single channel init failure is reported and skipped,
 while remaining channels continue running.
 
 ## In-Chat Runtime Commands
 
-When running `zeroclaw channel start` (or daemon mode), runtime commands include:
+When running `dx channel start` (or daemon mode), runtime commands include:
 
 Telegram/Discord sender-scoped model routing:
 - `/models` — show available providers and current selection
@@ -65,7 +65,7 @@ Notes:
 
 - Switching provider or model clears only that sender's in-memory conversation history to avoid cross-model context contamination.
 - `/new` clears the sender's conversation history without changing provider or model selection.
-- Model cache previews come from `zeroclaw models refresh --provider <ID>`.
+- Model cache previews come from `dx models refresh --provider <ID>`.
 - These are runtime chat commands, not CLI subcommands.
 - Natural-language approval intents are supported with strict parsing and policy control:
   - `direct` mode (default): `授权工具 shell` grants immediately.
@@ -80,7 +80,7 @@ Notes:
 
 ## Inbound Image Marker Protocol
 
-ZeroClaw supports multimodal input through inline message markers:
+DX supports multimodal input through inline message markers:
 
 - Syntax: ``[IMAGE:<source>]``
 - `<source>` can be:
@@ -119,7 +119,7 @@ cargo check --no-default-features --features hardware,channel-matrix
 cargo check --no-default-features --features hardware,channel-lark
 ```
 
-If `[channels_config.matrix]`, `[channels_config.lark]`, or `[channels_config.feishu]` is present but the corresponding feature is not compiled in, `zeroclaw channel list`, `zeroclaw channel doctor`, and `zeroclaw channel start` will report that the channel is intentionally skipped for this build.
+If `[channels_config.matrix]`, `[channels_config.lark]`, or `[channels_config.feishu]` is present but the corresponding feature is not compiled in, `dx channel list`, `dx channel doctor`, and `dx channel start` will report that the channel is intentionally skipped for this build.
 
 ---
 
@@ -267,7 +267,7 @@ allowed_sender_ids = []            # optional: sender IDs that bypass mention ga
 [channels_config.matrix]
 homeserver = "https://matrix.example.com"
 access_token = "syt_..."
-user_id = "@zeroclaw:matrix.example.com"   # optional, recommended for E2EE
+user_id = "@dx:matrix.example.com"   # optional, recommended for E2EE
 device_id = "DEVICEID123"                  # optional, recommended for E2EE
 room_id = "!room:matrix.example.com"       # or room alias (#ops:matrix.example.com)
 allowed_users = ["*"]
@@ -290,7 +290,7 @@ ignore_stories = true
 
 ### 4.7 WhatsApp
 
-ZeroClaw supports two WhatsApp backends:
+DX supports two WhatsApp backends:
 
 - **Cloud API mode** (`phone_number_id` + `access_token` + `verify_token`)
 - **WhatsApp Web mode** (`session_path`, requires build flag `--features whatsapp-web`)
@@ -310,7 +310,7 @@ WhatsApp Web mode:
 
 ```toml
 [channels_config.whatsapp]
-session_path = "~/.zeroclaw/state/whatsapp-web/session.db"
+session_path = "~/.dx/state/whatsapp-web/session.db"
 pair_phone = "15551234567"         # optional; omit to use QR flow
 pair_code = ""                     # optional custom pair code
 allowed_numbers = ["*"]
@@ -357,9 +357,9 @@ allowed_senders = ["*"]
 [channels_config.irc]
 server = "irc.libera.chat"
 port = 6697
-nickname = "zeroclaw-bot"
-username = "zeroclaw"              # optional
-channels = ["#zeroclaw"]
+nickname = "dx-bot"
+username = "dx"              # optional
+channels = ["#dx"]
 allowed_users = ["*"]
 server_password = ""                # optional
 nickserv_password = ""              # optional
@@ -408,7 +408,7 @@ Migration note:
 - Legacy config `[channels_config.lark] use_feishu = true` is still supported for backward compatibility.
 - Prefer `[channels_config.feishu]` for new setups.
 - Inbound `image` messages are converted to multimodal markers (`[IMAGE:data:image/...;base64,...]`).
-- If image download fails, ZeroClaw forwards fallback text instead of silently dropping the message.
+- If image download fails, DX forwards fallback text instead of silently dropping the message.
 
 ### 4.13 Nostr
 
@@ -427,7 +427,7 @@ via the `SecretStore` when `secrets.encrypt = true` (the default).
 Interactive onboarding support:
 
 ```bash
-zeroclaw onboard --interactive
+dx onboard --interactive
 ```
 
 The wizard now includes dedicated **Lark** and **Feishu** steps with:
@@ -522,8 +522,8 @@ allowed_contacts = ["*"]
 2. Run:
 
 ```bash
-zeroclaw onboard --channels-only
-zeroclaw daemon
+dx onboard --channels-only
+dx daemon
 ```
 
 1. Send a message from an expected sender.
@@ -542,7 +542,7 @@ If a channel appears connected but does not respond:
 4. Confirm transport mode assumptions:
    - polling/websocket channels do not need public inbound HTTP
    - webhook channels do need reachable HTTPS callback
-5. Restart `zeroclaw daemon` after config changes.
+5. Restart `dx daemon` after config changes.
 
 For Matrix encrypted rooms specifically, use:
 - [Matrix E2EE Guide](./matrix-e2ee-guide.md)
@@ -556,13 +556,13 @@ Use this appendix for fast triage. Match log keywords first, then follow the tro
 ### 7.1 Recommended capture command
 
 ```bash
-RUST_LOG=info zeroclaw daemon 2>&1 | tee /tmp/zeroclaw.log
+RUST_LOG=info dx daemon 2>&1 | tee /tmp/dx.log
 ```
 
 Then filter channel/gateway events:
 
 ```bash
-rg -n "Matrix|Telegram|Discord|Slack|Mattermost|Signal|WhatsApp|Email|IRC|Lark|DingTalk|QQ|iMessage|Nostr|Webhook|Channel" /tmp/zeroclaw.log
+rg -n "Matrix|Telegram|Discord|Slack|Mattermost|Signal|WhatsApp|Email|IRC|Lark|DingTalk|QQ|iMessage|Nostr|Webhook|Channel" /tmp/dx.log
 ```
 
 ### 7.2 Keyword table

@@ -1773,7 +1773,7 @@ pub async fn run(
         auth_profile_override: None,
         provider_api_url: config.api_url.clone(),
         provider_transport: config.effective_provider_transport(),
-        zeroclaw_dir: config.config_path.parent().map(std::path::PathBuf::from),
+        dx_dir: config.config_path.parent().map(std::path::PathBuf::from),
         secrets_encrypt: config.secrets.encrypt,
         reasoning_enabled: config.runtime.reasoning_enabled,
         reasoning_level: config.effective_provider_reasoning_level(),
@@ -1920,7 +1920,7 @@ pub async fn run(
         ));
         tool_descs.push((
             "arduino_upload",
-            "Upload agent-generated Arduino sketch. Use when: user asks for 'make a heart', 'blink pattern', or custom LED behavior on Arduino. You write the full .ino code; ZeroClaw compiles and uploads it. Pin 13 = built-in LED on Uno.",
+            "Upload agent-generated Arduino sketch. Use when: user asks for 'make a heart', 'blink pattern', or custom LED behavior on Arduino. You write the full .ino code; DX compiles and uploads it. Pin 13 = built-in LED on Uno.",
         ));
         tool_descs.push((
             "hardware_memory_map",
@@ -2037,7 +2037,7 @@ pub async fn run(
         println!("{response}");
         observer.record_event(&ObserverEvent::TurnComplete);
     } else {
-        println!("🦀 ZeroClaw Interactive Mode");
+        println!("🚀 DX Interactive Mode");
         println!("Type /help for commands.\n");
         let cli = crate::channels::CliChannel::new();
 
@@ -2289,7 +2289,7 @@ pub async fn process_message(config: Config, message: &str) -> Result<String> {
         auth_profile_override: None,
         provider_api_url: config.api_url.clone(),
         provider_transport: config.effective_provider_transport(),
-        zeroclaw_dir: config.config_path.parent().map(std::path::PathBuf::from),
+        dx_dir: config.config_path.parent().map(std::path::PathBuf::from),
         secrets_encrypt: config.secrets.encrypt,
         reasoning_enabled: config.runtime.reasoning_enabled,
         reasoning_level: config.effective_provider_reasoning_level(),
@@ -2360,7 +2360,7 @@ pub async fn process_message(config: Config, message: &str) -> Result<String> {
         ));
         tool_descs.push((
             "arduino_upload",
-            "Upload Arduino sketch. Use for 'make a heart', custom patterns. You write full .ino code; ZeroClaw uploads it.",
+            "Upload Arduino sketch. Use for 'make a heart', custom patterns. You write full .ino code; DX uploads it.",
         ));
         tool_descs.push((
             "hardware_memory_map",

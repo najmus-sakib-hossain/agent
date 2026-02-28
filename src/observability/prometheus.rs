@@ -66,7 +66,7 @@ impl PrometheusObserver {
         .expect("valid metric");
 
         let channel_messages = IntCounterVec::new(
-            prometheus::Opts::new("zeroclaw_channel_messages_total", "Total channel messages"),
+            prometheus::Opts::new("dx_channel_messages_total", "Total channel messages"),
             &["channel", "direction"],
         )
         .expect("valid metric");

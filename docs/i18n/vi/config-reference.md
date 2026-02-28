@@ -1,4 +1,4 @@
-# Tham khảo cấu hình ZeroClaw
+# Tham khảo cấu hình DX
 
 Các mục cấu hình thường dùng và giá trị mặc định.
 
@@ -7,16 +7,16 @@ Xác minh lần cuối: **2026-02-19**.
 Thứ tự tìm config khi khởi động:
 
 1. Biến `ZEROCLAW_WORKSPACE` (nếu được đặt)
-2. Marker `~/.zeroclaw/active_workspace.toml` (nếu có)
-3. Mặc định `~/.zeroclaw/config.toml`
+2. Marker `~/.dx/active_workspace.toml` (nếu có)
+3. Mặc định `~/.dx/config.toml`
 
-ZeroClaw ghi log đường dẫn config đã giải quyết khi khởi động ở mức `INFO`:
+DX ghi log đường dẫn config đã giải quyết khi khởi động ở mức `INFO`:
 
 - `Config loaded` với các trường: `path`, `workspace`, `source`, `initialized`
 
 Lệnh xuất schema:
 
-- `zeroclaw config schema` (xuất JSON Schema draft 2020-12 ra stdout)
+- `dx config schema` (xuất JSON Schema draft 2020-12 ra stdout)
 
 ## Khóa chính
 
@@ -40,7 +40,7 @@ Lưu ý:
 |---|---|---|
 | `backend` | `none` | Backend quan sát: `none`, `noop`, `log`, `prometheus`, `otel`, `opentelemetry` hoặc `otlp` |
 | `otel_endpoint` | `http://localhost:4318` | Endpoint OTLP HTTP khi backend là `otel` |
-| `otel_service_name` | `zeroclaw` | Tên dịch vụ gửi đến OTLP collector |
+| `otel_service_name` | `dx` | Tên dịch vụ gửi đến OTLP collector |
 
 Lưu ý:
 
@@ -53,7 +53,7 @@ Ví dụ:
 [observability]
 backend = "otel"
 otel_endpoint = "http://localhost:4318"
-otel_service_name = "zeroclaw"
+otel_service_name = "dx"
 ```
 
 ## Ghi đè provider qua biến môi trường
@@ -157,7 +157,7 @@ Lưu ý:
 
 Lưu ý:
 
-- Mặc định an toàn: ZeroClaw **không** clone hay đồng bộ `open-skills` trừ khi `open_skills_enabled = true`.
+- Mặc định an toàn: DX **không** clone hay đồng bộ `open-skills` trừ khi `open_skills_enabled = true`.
 - Ghi đè qua biến môi trường:
   - `ZEROCLAW_OPEN_SKILLS_ENABLED` chấp nhận `1/0`, `true/false`, `yes/no`, `on/off`.
   - `ZEROCLAW_OPEN_SKILLS_DIR` ghi đè đường dẫn kho khi có giá trị.
@@ -175,7 +175,7 @@ Lưu ý:
 
 - Tương thích ngược: `enable = true` kiểu cũ được chấp nhận như bí danh cho `enabled = true`.
 - Nếu `enabled = false` hoặc thiếu `api_key`, tool `composio` không được đăng ký.
-- ZeroClaw yêu cầu Composio v3 tools với `toolkit_versions=latest` và thực thi với `version="latest"` để tránh bản tool mặc định cũ.
+- DX yêu cầu Composio v3 tools với `toolkit_versions=latest` và thực thi với `version="latest"` để tránh bản tool mặc định cũ.
 - Luồng thông thường: gọi `connect`, hoàn tất OAuth trên trình duyệt, rồi chạy `execute` cho hành động mong muốn.
 - Nếu Composio trả lỗi thiếu connected-account, gọi `list_accounts` (tùy chọn với `app`) và truyền `connected_account_id` trả về cho `execute`.
 
@@ -367,7 +367,7 @@ Chiến lược nâng cấp:
 
 1. Giữ hint ổn định (`hint:reasoning`, `hint:semantic`).
 2. Chỉ cập nhật `model = "...phiên-bản-mới..."` trong mục route.
-3. Kiểm tra bằng `zeroclaw doctor` trước khi khởi động lại/triển khai.
+3. Kiểm tra bằng `dx doctor` trước khi khởi động lại/triển khai.
 
 ## `[query_classification]`
 
@@ -431,7 +431,7 @@ Lưu ý:
 - Khi timeout xảy ra, người dùng nhận: `⚠️ Request timed out while waiting for the model. Please try again.`
 - Hành vi ngắt chỉ Telegram được điều khiển bằng `channels_config.telegram.interrupt_on_new_message` (mặc định `false`).
   Khi bật, tin nhắn mới từ cùng người gửi trong cùng chat sẽ hủy yêu cầu đang xử lý và giữ ngữ cảnh người dùng bị ngắt.
-- Khi `zeroclaw channel start` đang chạy, thay đổi `default_provider`, `default_model`, `default_temperature`, `api_key`, `api_url` và `reliability.*` được áp dụng nóng từ `config.toml` ở tin nhắn tiếp theo.
+- Khi `dx channel start` đang chạy, thay đổi `default_provider`, `default_model`, `default_temperature`, `api_key`, `api_url` và `reliability.*` được áp dụng nóng từ `config.toml` ở tin nhắn tiếp theo.
 
 Xem ma trận kênh và hành vi allowlist chi tiết tại [channels-reference.md](channels-reference.md).
 
@@ -533,10 +533,10 @@ Lưu ý:
 Sau khi chỉnh config:
 
 ```bash
-zeroclaw status
-zeroclaw doctor
-zeroclaw channel doctor
-zeroclaw service restart
+dx status
+dx doctor
+dx channel doctor
+dx service restart
 ```
 
 ## Tài liệu liên quan

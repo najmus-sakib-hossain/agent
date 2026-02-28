@@ -29,7 +29,7 @@ pub struct MatrixChannel {
     mention_only: bool,
     session_owner_hint: Option<String>,
     session_device_id_hint: Option<String>,
-    zeroclaw_dir: Option<PathBuf>,
+    dx_dir: Option<PathBuf>,
     resolved_room_id_cache: Arc<RwLock<Option<String>>>,
     sdk_client: Arc<OnceCell<MatrixSdkClient>>,
     http_client: Client,
@@ -149,7 +149,7 @@ impl MatrixChannel {
         allowed_users: Vec<String>,
         owner_hint: Option<String>,
         device_id_hint: Option<String>,
-        zeroclaw_dir: Option<PathBuf>,
+        dx_dir: Option<PathBuf>,
     ) -> Self {
         let homeserver = homeserver.trim_end_matches('/').to_string();
         let access_token = access_token.trim().to_string();
@@ -168,7 +168,7 @@ impl MatrixChannel {
             mention_only: false,
             session_owner_hint: Self::normalize_optional_field(owner_hint),
             session_device_id_hint: Self::normalize_optional_field(device_id_hint),
-            zeroclaw_dir,
+            dx_dir,
             resolved_room_id_cache: Arc::new(RwLock::new(None)),
             sdk_client: Arc::new(OnceCell::new()),
             http_client: Client::new(),
@@ -206,7 +206,7 @@ impl MatrixChannel {
     }
 
     fn matrix_store_dir(&self) -> Option<PathBuf> {
-        self.zeroclaw_dir
+        self.dx_dir
             .as_ref()
             .map(|dir| dir.join("state").join("matrix"))
     }
@@ -979,12 +979,12 @@ mod tests {
             vec![],
             None,
             None,
-            Some(PathBuf::from("/tmp/zeroclaw")),
+            Some(PathBuf::from("/tmp/dx")),
         );
 
         assert_eq!(
             ch.matrix_store_dir(),
-            Some(PathBuf::from("/tmp/zeroclaw/state/matrix"))
+            Some(PathBuf::from("/tmp/dx/state/matrix"))
         );
     }
 

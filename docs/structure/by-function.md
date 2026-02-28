@@ -1,4 +1,4 @@
-# ZeroClaw Docs By Function
+# DX Docs By Function
 
 This index groups documentation by operational function instead of folder path.
 

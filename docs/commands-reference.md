@@ -1,6 +1,6 @@
-# ZeroClaw Commands Reference
+# DX Commands Reference
 
-This reference is derived from the current CLI surface (`zeroclaw --help`).
+This reference is derived from the current CLI surface (`dx --help`).
 
 Last verified: **February 28, 2026**.
 
@@ -32,13 +32,13 @@ Last verified: **February 28, 2026**.
 
 ### `onboard`
 
-- `zeroclaw onboard`
-- `zeroclaw onboard --interactive`
-- `zeroclaw onboard --channels-only`
-- `zeroclaw onboard --force`
-- `zeroclaw onboard --api-key <KEY> --provider <ID> --memory <sqlite|lucid|markdown|none>`
-- `zeroclaw onboard --api-key <KEY> --provider <ID> --model <MODEL_ID> --memory <sqlite|lucid|markdown|none>`
-- `zeroclaw onboard --api-key <KEY> --provider <ID> --model <MODEL_ID> --memory <sqlite|lucid|markdown|none> --force`
+- `dx onboard`
+- `dx onboard --interactive`
+- `dx onboard --channels-only`
+- `dx onboard --force`
+- `dx onboard --api-key <KEY> --provider <ID> --memory <sqlite|lucid|markdown|none>`
+- `dx onboard --api-key <KEY> --provider <ID> --model <MODEL_ID> --memory <sqlite|lucid|markdown|none>`
+- `dx onboard --api-key <KEY> --provider <ID> --model <MODEL_ID> --memory <sqlite|lucid|markdown|none> --force`
 
 `onboard` safety behavior:
 
@@ -46,14 +46,14 @@ Last verified: **February 28, 2026**.
   - Full onboarding (overwrite `config.toml`)
   - Provider-only update (update provider/model/API key while preserving existing channels, tunnel, memory, hooks, and other settings)
 - In non-interactive environments, existing `config.toml` causes a safe refusal unless `--force` is passed.
-- Use `zeroclaw onboard --channels-only` when you only need to rotate channel tokens/allowlists.
+- Use `dx onboard --channels-only` when you only need to rotate channel tokens/allowlists.
 
 ### `agent`
 
-- `zeroclaw agent`
-- `zeroclaw agent -m "Hello"`
-- `zeroclaw agent --provider <ID> --model <MODEL> --temperature <0.0-2.0>`
-- `zeroclaw agent --peripheral <board:path>`
+- `dx agent`
+- `dx agent -m "Hello"`
+- `dx agent --provider <ID> --model <MODEL> --temperature <0.0-2.0>`
+- `dx agent --peripheral <board:path>`
 
 Tip:
 
@@ -64,23 +64,23 @@ Tip:
 
 ### `gateway` / `daemon`
 
-- `zeroclaw gateway [--host <HOST>] [--port <PORT>] [--new-pairing]`
-- `zeroclaw daemon [--host <HOST>] [--port <PORT>]`
+- `dx gateway [--host <HOST>] [--port <PORT>] [--new-pairing]`
+- `dx daemon [--host <HOST>] [--port <PORT>]`
 
 `--new-pairing` clears all stored paired tokens and forces generation of a fresh pairing code on gateway startup.
 
 ### `estop`
 
-- `zeroclaw estop` (engage `kill-all`)
-- `zeroclaw estop --level network-kill`
-- `zeroclaw estop --level domain-block --domain "*.chase.com" [--domain "*.paypal.com"]`
-- `zeroclaw estop --level tool-freeze --tool shell [--tool browser]`
-- `zeroclaw estop status`
-- `zeroclaw estop resume`
-- `zeroclaw estop resume --network`
-- `zeroclaw estop resume --domain "*.chase.com"`
-- `zeroclaw estop resume --tool shell`
-- `zeroclaw estop resume --otp <123456>`
+- `dx estop` (engage `kill-all`)
+- `dx estop --level network-kill`
+- `dx estop --level domain-block --domain "*.chase.com" [--domain "*.paypal.com"]`
+- `dx estop --level tool-freeze --tool shell [--tool browser]`
+- `dx estop status`
+- `dx estop resume`
+- `dx estop resume --network`
+- `dx estop resume --domain "*.chase.com"`
+- `dx estop resume --tool shell`
+- `dx estop resume --otp <123456>`
 
 Notes:
 
@@ -90,23 +90,23 @@ Notes:
 
 ### `service`
 
-- `zeroclaw service install`
-- `zeroclaw service start`
-- `zeroclaw service stop`
-- `zeroclaw service restart`
-- `zeroclaw service status`
-- `zeroclaw service uninstall`
+- `dx service install`
+- `dx service start`
+- `dx service stop`
+- `dx service restart`
+- `dx service status`
+- `dx service uninstall`
 
 ### `cron`
 
-- `zeroclaw cron list`
-- `zeroclaw cron add <expr> [--tz <IANA_TZ>] <command>`
-- `zeroclaw cron add-at <rfc3339_timestamp> <command>`
-- `zeroclaw cron add-every <every_ms> <command>`
-- `zeroclaw cron once <delay> <command>`
-- `zeroclaw cron remove <id>`
-- `zeroclaw cron pause <id>`
-- `zeroclaw cron resume <id>`
+- `dx cron list`
+- `dx cron add <expr> [--tz <IANA_TZ>] <command>`
+- `dx cron add-at <rfc3339_timestamp> <command>`
+- `dx cron add-every <every_ms> <command>`
+- `dx cron once <delay> <command>`
+- `dx cron remove <id>`
+- `dx cron pause <id>`
+- `dx cron resume <id>`
 
 Notes:
 
@@ -115,33 +115,33 @@ Notes:
 
 ### `models`
 
-- `zeroclaw models refresh`
-- `zeroclaw models refresh --provider <ID>`
-- `zeroclaw models refresh --force`
+- `dx models refresh`
+- `dx models refresh --provider <ID>`
+- `dx models refresh --force`
 
 `models refresh` currently supports live catalog refresh for provider IDs: `openrouter`, `openai`, `anthropic`, `groq`, `mistral`, `deepseek`, `xai`, `together-ai`, `gemini`, `ollama`, `llamacpp`, `sglang`, `vllm`, `astrai`, `venice`, `fireworks`, `cohere`, `moonshot`, `glm`, `zai`, `qwen`, `volcengine` (`doubao`/`ark` aliases), `siliconflow`, and `nvidia`.
 
 ### `doctor`
 
-- `zeroclaw doctor`
-- `zeroclaw doctor models [--provider <ID>] [--use-cache]`
-- `zeroclaw doctor traces [--limit <N>] [--event <TYPE>] [--contains <TEXT>]`
-- `zeroclaw doctor traces --id <TRACE_ID>`
+- `dx doctor`
+- `dx doctor models [--provider <ID>] [--use-cache]`
+- `dx doctor traces [--limit <N>] [--event <TYPE>] [--contains <TEXT>]`
+- `dx doctor traces --id <TRACE_ID>`
 
 Provider connectivity matrix CI/local helper:
 
-- `python3 scripts/ci/provider_connectivity_matrix.py --binary target/release-fast/zeroclaw --contract .github/connectivity/probe-contract.json`
+- `python3 scripts/ci/provider_connectivity_matrix.py --binary target/release-fast/dx --contract .github/connectivity/probe-contract.json`
 
 `doctor traces` reads runtime tool/model diagnostics from `observability.runtime_trace_path`.
 
 ### `channel`
 
-- `zeroclaw channel list`
-- `zeroclaw channel start`
-- `zeroclaw channel doctor`
-- `zeroclaw channel bind-telegram <IDENTITY>`
-- `zeroclaw channel add <type> <json>`
-- `zeroclaw channel remove <name>`
+- `dx channel list`
+- `dx channel start`
+- `dx channel doctor`
+- `dx channel bind-telegram <IDENTITY>`
+- `dx channel add <type> <json>`
+- `dx channel remove <name>`
 
 Runtime in-chat commands while channel server is running:
 
@@ -173,7 +173,7 @@ Approval safety behavior:
 - Optional policy gate: `[autonomy].non_cli_approval_approvers` can restrict who may execute approval-management commands.
 
 Startup behavior for multiple channels:
-- `zeroclaw channel start` starts all configured channels in one process.
+- `dx channel start` starts all configured channels in one process.
 - If one channel fails initialization, other channels continue to start.
 - If all configured channels fail initialization, startup exits with an error.
 
@@ -188,14 +188,14 @@ Channel runtime also watches `config.toml` and hot-applies updates to:
 
 ### `integrations`
 
-- `zeroclaw integrations info <name>`
+- `dx integrations info <name>`
 
 ### `skills`
 
-- `zeroclaw skills list`
-- `zeroclaw skills audit <source_or_name>`
-- `zeroclaw skills install <source>`
-- `zeroclaw skills remove <name>`
+- `dx skills list`
+- `dx skills audit <source_or_name>`
+- `dx skills install <source>`
+- `dx skills remove <name>`
 
 `<source>` accepts:
 
@@ -213,13 +213,13 @@ Channel runtime also watches `config.toml` and hot-applies updates to:
 
 ```bash
 # Install by profile URL (slug extracted from last path segment)
-zeroclaw skill install https://clawhub.ai/steipete/summarize
+dx skill install https://clawhub.ai/steipete/summarize
 
 # Install using short prefix
-zeroclaw skill install clawhub:summarize
+dx skill install clawhub:summarize
 
 # Install from a zip already downloaded locally
-zeroclaw skill install ~/Downloads/summarize-1.0.0.zip
+dx skill install ~/Downloads/summarize-1.0.0.zip
 ```
 
 If the ClawhHub API returns 429 (rate limit) or requires authentication, set `clawhub_token` in `[skills]` config (see [config reference](config-reference.md#skills)).
@@ -228,7 +228,7 @@ If the ClawhHub API returns 429 (rate limit) or requires authentication, set `cl
 - If the zip contains `_meta.json` (OpenClaw convention), name/version/author are read from it.
 - A minimal `SKILL.toml` is written automatically if neither `SKILL.toml` nor `SKILL.md` is present in the zip.
 
-Registry packages are installed to `~/.zeroclaw/workspace/skills/<name>/`.
+Registry packages are installed to `~/.dx/workspace/skills/<name>/`.
 
 `skills install` always runs a built-in static security audit before the skill is accepted. The audit blocks:
 - symlinks inside the skill package
@@ -244,43 +244,43 @@ Skill manifests (`SKILL.toml`) support `prompts` and `[[tools]]`; both are injec
 
 ### `migrate`
 
-- `zeroclaw migrate openclaw [--source <path>] [--dry-run]`
+- `dx migrate openclaw [--source <path>] [--dry-run]`
 
 ### `config`
 
-- `zeroclaw config schema`
+- `dx config schema`
 
 `config schema` prints a JSON Schema (draft 2020-12) for the full `config.toml` contract to stdout.
 
 ### `completions`
 
-- `zeroclaw completions bash`
-- `zeroclaw completions fish`
-- `zeroclaw completions zsh`
-- `zeroclaw completions powershell`
-- `zeroclaw completions elvish`
+- `dx completions bash`
+- `dx completions fish`
+- `dx completions zsh`
+- `dx completions powershell`
+- `dx completions elvish`
 
 `completions` is stdout-only by design so scripts can be sourced directly without log/warning contamination.
 
 ### `hardware`
 
-- `zeroclaw hardware discover`
-- `zeroclaw hardware introspect <path>`
-- `zeroclaw hardware info [--chip <chip_name>]`
+- `dx hardware discover`
+- `dx hardware introspect <path>`
+- `dx hardware info [--chip <chip_name>]`
 
 ### `peripheral`
 
-- `zeroclaw peripheral list`
-- `zeroclaw peripheral add <board> <path>`
-- `zeroclaw peripheral flash [--port <serial_port>]`
-- `zeroclaw peripheral setup-uno-q [--host <ip_or_host>]`
-- `zeroclaw peripheral flash-nucleo`
+- `dx peripheral list`
+- `dx peripheral add <board> <path>`
+- `dx peripheral flash [--port <serial_port>]`
+- `dx peripheral setup-uno-q [--host <ip_or_host>]`
+- `dx peripheral flash-nucleo`
 
 ## Validation Tip
 
 To verify docs against your current binary quickly:
 
 ```bash
-zeroclaw --help
-zeroclaw <command> --help
+dx --help
+dx <command> --help
 ```

@@ -1,4 +1,4 @@
-# ZeroClaw Project Triage Snapshot (2026-02-18)
+# DX Project Triage Snapshot (2026-02-18)
 
 As-of date: **February 18, 2026**.
 

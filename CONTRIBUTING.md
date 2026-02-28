@@ -1,6 +1,6 @@
-# Contributing to ZeroClaw
+# Contributing to DX
 
-Thanks for your interest in contributing to ZeroClaw! This guide will help you get started.
+Thanks for your interest in contributing to DX! This guide will help you get started.
 
 ## First-Time Contributors
 
@@ -19,7 +19,7 @@ Welcome — contributions of all sizes are valued. If this is your first contrib
    - Make your changes and run `cargo fmt && cargo clippy && cargo test`
    - Open a PR against `dev` using the PR template
 
-4. **Start with Track A.** ZeroClaw uses three [collaboration tracks](#collaboration-tracks-risk-based) (A/B/C) based on risk. First-time contributors should target **Track A** (docs, tests, chore) — these require lighter review and are the fastest path to a merged PR.
+4. **Start with Track A.** DX uses three [collaboration tracks](#collaboration-tracks-risk-based) (A/B/C) based on risk. First-time contributors should target **Track A** (docs, tests, chore) — these require lighter review and are the fastest path to a merged PR.
 
 If you get stuck, open a draft PR early and ask questions in the description.
 
@@ -28,7 +28,7 @@ If you get stuck, open a draft PR early and ask questions in the description.
 ```bash
 # Clone the repo
 git clone https://github.com/zeroclaw-labs/zeroclaw.git
-cd zeroclaw
+cd dx
 
 # Enable the pre-push hook (runs fmt, clippy, tests before every push)
 git config core.hooksPath .githooks
@@ -102,7 +102,7 @@ git push --no-verify
 
 ## Local Secret Management (Required)
 
-ZeroClaw supports layered secret management for local development and CI hygiene.
+DX supports layered secret management for local development and CI hygiene.
 
 ### Secret Storage Options
 
@@ -111,11 +111,11 @@ ZeroClaw supports layered secret management for local development and CI hygiene
     - `.env` files are Git-ignored and should stay local
     - Best for temporary/local API keys
 
-2. **Config file** (`~/.zeroclaw/config.toml`)
+2. **Config file** (`~/.dx/config.toml`)
     - Persistent setup for long-term use
     - When `secrets.encrypt = true` (default), secret values are encrypted before save
-    - Secret key is stored at `~/.zeroclaw/.secret_key` with restricted permissions
-    - Use `zeroclaw onboard` for guided setup
+    - Secret key is stored at `~/.dx/.secret_key` with restricted permissions
+    - Use `dx onboard` for guided setup
 
 ### Runtime Resolution Rules
 
@@ -175,7 +175,7 @@ If gitleaks is not installed, the pre-commit hook prints a warning and continues
 - API keys, tokens, passwords, or credentials (plain or encrypted)
 - OAuth tokens or session identifiers
 - Webhook signing secrets
-- `~/.zeroclaw/.secret_key` or similar key files
+- `~/.dx/.secret_key` or similar key files
 - Personal identifiers or real user data in tests/fixtures
 
 ### If a Secret Is Committed Accidentally
@@ -235,7 +235,7 @@ Before requesting review, ensure all of the following are true:
 - Security impact and rollback path are explicitly described.
 - No personal/sensitive data is introduced in code/docs/tests/fixtures/logs/examples/commit messages.
 - Tests/fixtures/examples use neutral project-scoped wording (no identity-specific or first-person phrasing).
-- If identity-like wording is required, use ZeroClaw-centric labels only (for example: `ZeroClawAgent`, `ZeroClawOperator`, `zeroclaw_user`).
+- If identity-like wording is required, use DX-centric labels only (for example: `ZeroClawAgent`, `ZeroClawOperator`, `zeroclaw_user`).
 - If docs were changed, update `docs/README.md` navigation and reciprocal links with related docs.
 - If a new operational doc was added, start from `docs/doc-template.md` and keep risk/rollback/troubleshooting sections where applicable.
 - Linked issue (or rationale for no issue) is included.
@@ -262,7 +262,7 @@ When PR traffic is high (especially with AI-assisted contributions), these rules
 - **Security-first review**: changes in `src/security/`, runtime, gateway, and CI need stricter validation.
 - **Risk-first triage**: use labels (`risk: high`, `risk: medium`, `risk: low`) to route review depth.
 - **Privacy-first hygiene**: redact/anonymize sensitive payloads and keep tests/examples neutral and project-scoped.
-- **Identity normalization**: when identity traits are unavoidable, use ZeroClaw/project-native roles instead of personal or real-world identities.
+- **Identity normalization**: when identity traits are unavoidable, use DX/project-native roles instead of personal or real-world identities.
 - **Supersede hygiene**: if your PR replaces an older open PR, add `Supersedes #...` and request maintainers close the outdated one.
 
 Full maintainer workflow: [`docs/pr-workflow.md`](docs/pr-workflow.md).
@@ -287,7 +287,7 @@ Agent implementation playbook lives in [`AGENTS.md`](AGENTS.md).
 
 ## Architecture: Trait-Based Pluggability
 
-ZeroClaw's architecture is built on **traits** — every subsystem is swappable. This means contributing a new integration is as simple as implementing a trait and registering it in the factory function.
+DX's architecture is built on **traits** — every subsystem is swappable. This means contributing a new integration is as simple as implementing a trait and registering it in the factory function.
 
 ```
 src/
@@ -309,7 +309,7 @@ Use these defaults unless an existing subsystem pattern clearly overrides them.
 - **Trait implementers**: keep predictable suffixes (`*Provider`, `*Channel`, `*Tool`, `*Memory`, `*Observer`, `*RuntimeAdapter`).
 - **Factory keys**: keep lowercase and stable (`openai`, `discord`, `shell`); avoid adding aliases without migration need.
 - **Tests**: use behavior-oriented names (`subject_expected_behavior`) and neutral project-scoped fixtures.
-- **Identity-like labels**: if unavoidable, use ZeroClaw-native identifiers only (`ZeroClawAgent`, `zeroclaw_user`, `zeroclaw_node`).
+- **Identity-like labels**: if unavoidable, use DX-native identifiers only (`ZeroClawAgent`, `zeroclaw_user`, `zeroclaw_node`).
 
 ## Architecture Boundary Rules (Required)
 
@@ -495,7 +495,7 @@ impl Tool for YourTool {
 - [ ] Follows code naming conventions and architecture boundary rules in this guide
 - [ ] No personal/sensitive data in code/docs/tests/fixtures/logs/examples/commit messages
 - [ ] Test names/messages/fixtures/examples are neutral and project-focused
-- [ ] Any required identity-like wording uses ZeroClaw/project-native labels only
+- [ ] Any required identity-like wording uses DX/project-native labels only
 
 ## Commit Convention
 

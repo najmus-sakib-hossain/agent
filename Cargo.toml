@@ -3,12 +3,12 @@ members = [".", "crates/robot-kit"]
 resolver = "2"
 
 [package]
-name = "zeroclaw"
+name = "dx"
 version = "0.1.7"
 edition = "2021"
 authors = ["theonlyhennygod"]
 license = "MIT OR Apache-2.0"
-description = "Zero overhead. Zero compromise. 100% Rust. The fastest, smallest AI assistant."
+description = "DX — Enhance the development experience for everyone. 100% Rust, offline-first, 100+ LLM providers."
 repository = "https://github.com/zeroclaw-labs/zeroclaw"
 readme = "README.md"
 keywords = ["ai", "agent", "cli", "assistant", "chatbot"]

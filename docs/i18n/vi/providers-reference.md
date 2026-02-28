@@ -1,4 +1,4 @@
-# Tài liệu tham khảo Providers — ZeroClaw
+# Tài liệu tham khảo Providers — DX
 
 Tài liệu này liệt kê các provider ID, alias và biến môi trường chứa thông tin xác thực.
 
@@ -7,7 +7,7 @@ Cập nhật lần cuối: **2026-02-28**.
 ## Cách liệt kê các Provider
 
 ```bash
-zeroclaw providers
+dx providers
 ```
 
 ## Thứ tự ưu tiên khi giải quyết thông tin xác thực
@@ -77,14 +77,14 @@ Ví dụ thiết lập nhanh:
 
 ```bash
 export ARK_API_KEY="your-ark-api-key"
-zeroclaw onboard --provider volcengine --api-key "$ARK_API_KEY" --model doubao-1-5-pro-32k-250115 --force
+dx onboard --provider volcengine --api-key "$ARK_API_KEY" --model doubao-1-5-pro-32k-250115 --force
 ```
 
 Kiểm tra nhanh:
 
 ```bash
-zeroclaw models refresh --provider volcengine
-zeroclaw agent --provider volcengine --model doubao-1-5-pro-32k-250115 -m "ping"
+dx models refresh --provider volcengine
+dx agent --provider volcengine --model doubao-1-5-pro-32k-250115 -m "ping"
 ```
 
 ### Ghi chú về SiliconFlow
@@ -100,22 +100,22 @@ Ví dụ thiết lập nhanh:
 
 ```bash
 export SILICONFLOW_API_KEY="your-siliconflow-api-key"
-zeroclaw onboard --provider siliconflow --api-key "$SILICONFLOW_API_KEY" --model Pro/zai-org/GLM-4.7 --force
+dx onboard --provider siliconflow --api-key "$SILICONFLOW_API_KEY" --model Pro/zai-org/GLM-4.7 --force
 ```
 
 Kiểm tra nhanh:
 
 ```bash
-zeroclaw models refresh --provider siliconflow
-zeroclaw agent --provider siliconflow --model Pro/zai-org/GLM-4.7 -m "ping"
+dx models refresh --provider siliconflow
+dx agent --provider siliconflow --model Pro/zai-org/GLM-4.7 -m "ping"
 ```
 
 ### Ghi chú về Ollama Vision
 
 - Provider ID: `ollama`
 - Hỗ trợ đầu vào hình ảnh qua marker nội tuyến trong tin nhắn: ``[IMAGE:<source>]``
-- Sau khi chuẩn hóa multimodal, ZeroClaw gửi payload hình ảnh qua trường `messages[].images` gốc của Ollama.
-- Nếu chọn provider không hỗ trợ vision, ZeroClaw trả về lỗi rõ ràng thay vì âm thầm bỏ qua hình ảnh.
+- Sau khi chuẩn hóa multimodal, DX gửi payload hình ảnh qua trường `messages[].images` gốc của Ollama.
+- Nếu chọn provider không hỗ trợ vision, DX trả về lỗi rõ ràng thay vì âm thầm bỏ qua hình ảnh.
 
 ### Ghi chú về Bedrock
 
@@ -146,7 +146,7 @@ Hành vi:
 ### Ghi đè Vision cho Ollama
 
 Một số model Ollama hỗ trợ vision (ví dụ `llava`, `llama3.2-vision`) trong khi các model khác thì không.
-Vì ZeroClaw không thể tự động phát hiện, bạn có thể ghi đè trong `config.toml`:
+Vì DX không thể tự động phát hiện, bạn có thể ghi đè trong `config.toml`:
 
 ```toml
 default_provider = "ollama"
@@ -189,7 +189,7 @@ Hành vi:
 - Canonical provider ID: `nvidia`
 - Alias: `nvidia-nim`, `build.nvidia.com`
 - Base API URL: `https://integrate.api.nvidia.com/v1`
-- Khám phá model: `zeroclaw models refresh --provider nvidia`
+- Khám phá model: `dx models refresh --provider nvidia`
 
 Các model ID khởi đầu được khuyến nghị (đã xác minh với danh mục NVIDIA API ngày 2026-02-18):
 
@@ -328,8 +328,8 @@ Quy trình được khuyến nghị:
 1. Giữ nguyên các call site (`hint:reasoning`, `hint:semantic`).
 2. Chỉ thay đổi model đích trong `[[model_routes]]` hoặc `[[embedding_routes]]`.
 3. Chạy:
-   - `zeroclaw doctor`
-   - `zeroclaw status`
+   - `dx doctor`
+   - `dx status`
 4. Smoke test một luồng đại diện (chat + memory retrieval) trước khi triển khai.
 
 Cách này giảm thiểu rủi ro phá vỡ vì các tích hợp và prompt không cần thay đổi khi nâng cấp model ID.

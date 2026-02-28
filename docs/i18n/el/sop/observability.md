@@ -20,9 +20,9 @@
 ### 2.1 CLI σε επίπεδο ορισμού
 
 ```bash
-zeroclaw sop list
-zeroclaw sop validate [name]
-zeroclaw sop show <name>
+dx sop list
+dx sop validate [name]
+dx sop show <name>
 ```
 
 ### 2.2 Εργαλεία κατάστασης εκτέλεσης runtime

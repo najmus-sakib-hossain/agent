@@ -1220,7 +1220,7 @@ mod tests {
     async fn get_reports_env_backed_credentials_for_routes_and_agents() {
         let _env_lock = env_lock();
         let _provider_guard = EnvGuard::set("TELNYX_API_KEY", Some("test-telnyx-key"));
-        let _generic_guard = EnvGuard::set("ZEROCLAW_API_KEY", None);
+        let _generic_guard = EnvGuard::set("DX_API_KEY", None);
         let _api_key_guard = EnvGuard::set("API_KEY", None);
 
         let tmp = TempDir::new().unwrap();

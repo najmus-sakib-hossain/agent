@@ -1,10 +1,10 @@
-//! Plugin system for ZeroClaw.
+//! Plugin system for DX.
 //!
 //! Modeled after OpenClaw's plugin architecture, adapted for Rust:
 //!
-//! - **Manifest**: each plugin has a `zeroclaw.plugin.toml` descriptor
-//! - **Discovery**: scans bundled, global (`~/.zeroclaw/extensions/`), and
-//!   workspace (`.zeroclaw/extensions/`) directories
+//! - **Manifest**: each plugin has a `dx.plugin.toml` descriptor
+//! - **Discovery**: scans bundled, global (`~/.dx/extensions/`), and
+//!   workspace (`.dx/extensions/`) directories
 //! - **Registry**: collects loaded plugins, their tools, hooks, and diagnostics
 //! - **PluginApi**: passed to `Plugin::register()` so plugins can register
 //!   tools, hooks, and services without knowing the host internals
@@ -14,7 +14,7 @@
 //! # Quick start
 //!
 //! ```rust,ignore
-//! use zeroclaw::plugins::{Plugin, PluginApi, PluginManifest};
+//! use dx::plugins::{Plugin, PluginApi, PluginManifest};
 //!
 //! pub struct MyPlugin { manifest: PluginManifest }
 //!
@@ -65,6 +65,6 @@ mod tests {
             version: None,
             config_schema: None,
         };
-        assert_eq!(PLUGIN_MANIFEST_FILENAME, "zeroclaw.plugin.toml");
+        assert_eq!(PLUGIN_MANIFEST_FILENAME, "dx.plugin.toml");
     }
 }

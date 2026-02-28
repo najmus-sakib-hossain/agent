@@ -20,9 +20,9 @@ Common key patterns:
 ### 2.1 Definition-level CLI
 
 ```bash
-zeroclaw sop list
-zeroclaw sop validate [name]
-zeroclaw sop show <name>
+dx sop list
+dx sop validate [name]
+dx sop show <name>
 ```
 
 ### 2.2 Runtime run-state tools

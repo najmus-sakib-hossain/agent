@@ -1,10 +1,10 @@
 # Hướng dẫn Tích hợp LangGraph
 
-Hướng dẫn này giải thích cách sử dụng gói Python `zeroclaw-tools` để gọi tool nhất quán với bất kỳ LLM provider nào tương thích OpenAI.
+Hướng dẫn này giải thích cách sử dụng gói Python `dx-tools` để gọi tool nhất quán với bất kỳ LLM provider nào tương thích OpenAI.
 
 ## Bối cảnh
 
-Một số LLM provider, đặc biệt là các model Trung Quốc như GLM-5 (Zhipu AI), có hành vi gọi tool không nhất quán khi dùng phương thức text-based tool invocation. Core Rust của ZeroClaw sử dụng structured tool calling theo định dạng OpenAI API, nhưng một số model phản hồi tốt hơn với cách tiếp cận khác.
+Một số LLM provider, đặc biệt là các model Trung Quốc như GLM-5 (Zhipu AI), có hành vi gọi tool không nhất quán khi dùng phương thức text-based tool invocation. Core Rust của DX sử dụng structured tool calling theo định dạng OpenAI API, nhưng một số model phản hồi tốt hơn với cách tiếp cận khác.
 
 LangGraph cung cấp một stateful graph execution engine đảm bảo hành vi gọi tool nhất quán bất kể khả năng native của model nền tảng.
 
@@ -14,7 +14,7 @@ LangGraph cung cấp một stateful graph execution engine đảm bảo hành vi
 ┌─────────────────────────────────────────────────────────────┐
 │                      Your Application                        │
 ├─────────────────────────────────────────────────────────────┤
-│                   zeroclaw-tools Agent                       │
+│                   dx-tools Agent                       │
 │                                                              │
 │   ┌─────────────────────────────────────────────────────┐   │
 │   │              LangGraph StateGraph                    │   │
@@ -44,7 +44,7 @@ LangGraph cung cấp một stateful graph execution engine đảm bảo hành vi
 ### Cài đặt
 
 ```bash
-pip install zeroclaw-tools
+pip install dx-tools
 ```
 
 ### Sử dụng cơ bản
@@ -182,15 +182,15 @@ export API_KEY="your-key"
 export BRAVE_API_KEY="your-brave-key"  # Optional, for web search
 
 # Single message
-zeroclaw-tools "What is the current date?"
+dx-tools "What is the current date?"
 
 # Interactive mode
-zeroclaw-tools -i
+dx-tools -i
 ```
 
-## So sánh với Rust ZeroClaw
+## So sánh với Rust DX
 
-| Khía cạnh | Rust ZeroClaw | zeroclaw-tools |
+| Khía cạnh | Rust DX | dx-tools |
 |--------|---------------|-----------------|
 | **Hiệu năng** | Cực nhanh (~10ms khởi động) | Khởi động Python (~500ms) |
 | **Bộ nhớ** | <5 MB | ~50 MB |
@@ -199,12 +199,12 @@ zeroclaw-tools -i
 | **Khả năng mở rộng** | Rust traits | Python decorators |
 | **Hệ sinh thái** | Rust crates | PyPI packages |
 
-**Khi nào dùng Rust ZeroClaw:**
+**Khi nào dùng Rust DX:**
 - Triển khai edge cho môi trường production
 - Môi trường hạn chế tài nguyên (Raspberry Pi, v.v.)
 - Yêu cầu hiệu năng tối đa
 
-**Khi nào dùng zeroclaw-tools:**
+**Khi nào dùng dx-tools:**
 - Các model có tool calling native không nhất quán
 - Phát triển trung tâm vào Python
 - Prototyping nhanh

@@ -1,4 +1,4 @@
-# ZeroClaw Operations Runbook
+# DX Operations Runbook
 
 This runbook is for operators who maintain availability, security posture, and incident response.
 
@@ -19,59 +19,59 @@ For first-time installation, start from [one-click-bootstrap.md](one-click-boots
 
 | Mode | Command | When to use |
 |---|---|---|
-| Foreground runtime | `zeroclaw daemon` | local debugging, short-lived sessions |
-| Foreground gateway only | `zeroclaw gateway` | webhook endpoint testing |
-| User service | `zeroclaw service install && zeroclaw service start` | persistent operator-managed runtime |
+| Foreground runtime | `dx daemon` | local debugging, short-lived sessions |
+| Foreground gateway only | `dx gateway` | webhook endpoint testing |
+| User service | `dx service install && dx service start` | persistent operator-managed runtime |
 
 ## Baseline Operator Checklist
 
 1. Validate configuration:
 
 ```bash
-zeroclaw status
+dx status
 ```
 
 2. Verify diagnostics:
 
 ```bash
-zeroclaw doctor
-zeroclaw channel doctor
+dx doctor
+dx channel doctor
 ```
 
 3. Start runtime:
 
 ```bash
-zeroclaw daemon
+dx daemon
 ```
 
 4. For persistent user session service:
 
 ```bash
-zeroclaw service install
-zeroclaw service start
-zeroclaw service status
+dx service install
+dx service start
+dx service status
 ```
 
 ## Health and State Signals
 
 | Signal | Command / File | Expected |
 |---|---|---|
-| Config validity | `zeroclaw doctor` | no critical errors |
-| Channel connectivity | `zeroclaw channel doctor` | configured channels healthy |
-| Runtime summary | `zeroclaw status` | expected provider/model/channels |
-| Daemon heartbeat/state | `~/.zeroclaw/daemon_state.json` | file updates periodically |
+| Config validity | `dx doctor` | no critical errors |
+| Channel connectivity | `dx channel doctor` | configured channels healthy |
+| Runtime summary | `dx status` | expected provider/model/channels |
+| Daemon heartbeat/state | `~/.dx/daemon_state.json` | file updates periodically |
 
 ## Logs and Diagnostics
 
 ### macOS / Windows (service wrapper logs)
 
-- `~/.zeroclaw/logs/daemon.stdout.log`
-- `~/.zeroclaw/logs/daemon.stderr.log`
+- `~/.dx/logs/daemon.stdout.log`
+- `~/.dx/logs/daemon.stderr.log`
 
 ### Linux (systemd user service)
 
 ```bash
-journalctl --user -u zeroclaw.service -f
+journalctl --user -u dx.service -f
 ```
 
 ## Incident Triage Flow (Fast Path)
@@ -79,25 +79,25 @@ journalctl --user -u zeroclaw.service -f
 1. Snapshot system state:
 
 ```bash
-zeroclaw status
-zeroclaw doctor
-zeroclaw channel doctor
+dx status
+dx doctor
+dx channel doctor
 ```
 
 2. Check service state:
 
 ```bash
-zeroclaw service status
+dx service status
 ```
 
 3. If service is unhealthy, restart cleanly:
 
 ```bash
-zeroclaw service stop
-zeroclaw service start
+dx service stop
+dx service start
 ```
 
-4. If channels still fail, verify allowlists and credentials in `~/.zeroclaw/config.toml`.
+4. If channels still fail, verify allowlists and credentials in `~/.dx/config.toml`.
 
 5. If gateway is involved, verify bind/auth settings (`[gateway]`) and local reachability.
 
@@ -125,9 +125,9 @@ When `sec-audit.yml` reports a gitleaks finding or uploads SARIF alerts:
 
 Before applying config changes:
 
-1. backup `~/.zeroclaw/config.toml`
+1. backup `~/.dx/config.toml`
 2. apply one logical change at a time
-3. run `zeroclaw doctor`
+3. run `dx doctor`
 4. restart daemon/service
 5. verify with `status` + `channel doctor`
 

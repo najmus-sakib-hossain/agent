@@ -23,9 +23,9 @@ pub enum PluginStatus {
 pub enum PluginOrigin {
     /// Shipped with the binary.
     Bundled,
-    /// Found in `~/.zeroclaw/extensions/`.
+    /// Found in `~/.dx/extensions/`.
     Global,
-    /// Found in `<workspace>/.zeroclaw/extensions/`.
+    /// Found in `<workspace>/.dx/extensions/`.
     Workspace,
 }
 

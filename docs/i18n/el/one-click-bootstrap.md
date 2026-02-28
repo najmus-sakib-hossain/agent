@@ -1,13 +1,13 @@
 # Προετοιμασία με Ένα Κλικ (One-Click Bootstrap)
 
-Αυτός ο οδηγός περιγράφει την ταχύτερη μέθοδο για την εγκατάσταση και την αρχικοποίηση του ZeroClaw.
+Αυτός ο οδηγός περιγράφει την ταχύτερη μέθοδο για την εγκατάσταση και την αρχικοποίηση του DX.
 
 Τελευταία επαλήθευση: **20 Φεβρουαρίου 2026**.
 
 ## Επιλογή 0: Homebrew (macOS / Linux)
 
 ```bash
-brew install zeroclaw
+brew install dx
 ```
 
 ## Επιλογή Α: Τοπικό Σενάριο (Προτεινόμενο)
@@ -15,7 +15,7 @@ brew install zeroclaw
 1. **Κλωνοποίηση του αποθετηρίου**:
    ```bash
    git clone https://github.com/zeroclaw-labs/zeroclaw.git
-   cd zeroclaw
+   cd dx
    ```
 2. **Εκτέλεση του bootstrap**:
    ```bash
@@ -69,7 +69,7 @@ curl -fsSL https://raw.githubusercontent.com/zeroclaw-labs/zeroclaw/main/scripts
 ```bash
 ./bootstrap.sh --docker
 ```
-Το σενάριο θα δημιουργήσει μια τοπική εικόνα Docker και θα ξεκινήσει τη διαδικασία onboarding. Οι ρυθμίσεις αποθηκεύονται στον κατάλογο `./.zeroclaw-docker`.
+Το σενάριο θα δημιουργήσει μια τοπική εικόνα Docker και θα ξεκινήσει τη διαδικασία onboarding. Οι ρυθμίσεις αποθηκεύονται στον κατάλογο `./.dx-docker`.
 
 ### Μη Διαδραστική Εισαγωγή
 

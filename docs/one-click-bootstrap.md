@@ -1,20 +1,20 @@
 # One-Click Bootstrap
 
-This page defines the fastest supported path to install and initialize ZeroClaw.
+This page defines the fastest supported path to install and initialize DX.
 
 Last verified: **February 20, 2026**.
 
 ## Option 0: Homebrew (macOS/Linuxbrew)
 
 ```bash
-brew install zeroclaw
+brew install dx
 ```
 
 ## Option A (Recommended): Clone + local script
 
 ```bash
 git clone https://github.com/zeroclaw-labs/zeroclaw.git
-cd zeroclaw
+cd dx
 ./bootstrap.sh
 ```
 
@@ -50,7 +50,7 @@ To bypass pre-built flow and force source compilation:
 
 ## Dual-mode bootstrap
 
-Default behavior is **app-only** (build/install ZeroClaw) and expects existing Rust toolchain.
+Default behavior is **app-only** (build/install DX) and expects existing Rust toolchain.
 
 For fresh machines, enable environment bootstrap explicitly:
 
@@ -92,8 +92,8 @@ If you run Option B outside a repository checkout, the bootstrap script automati
 ./bootstrap.sh --docker
 ```
 
-This builds a local ZeroClaw image and launches onboarding inside a container while
-persisting config/workspace to `./.zeroclaw-docker`.
+This builds a local DX image and launches onboarding inside a container while
+persisting config/workspace to `./.dx-docker`.
 
 Container CLI defaults to `docker`. If Docker CLI is unavailable and `podman` exists,
 bootstrap auto-falls back to `podman`. You can also set `ZEROCLAW_CONTAINER_CLI`
@@ -103,7 +103,7 @@ For Podman, bootstrap runs with `--userns keep-id` and `:Z` volume labels so
 workspace/config mounts remain writable inside the container.
 
 If you add `--skip-build`, bootstrap skips local image build. It first tries the local
-Docker tag (`ZEROCLAW_DOCKER_IMAGE`, default: `zeroclaw-bootstrap:local`); if missing,
+Docker tag (`ZEROCLAW_DOCKER_IMAGE`, default: `dx-bootstrap:local`); if missing,
 it pulls `ghcr.io/zeroclaw-labs/zeroclaw:latest` and tags it locally before running.
 
 ### Quick onboarding (non-interactive)

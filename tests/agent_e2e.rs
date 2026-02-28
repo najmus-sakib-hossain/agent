@@ -9,20 +9,20 @@
 
 use anyhow::Result;
 use async_trait::async_trait;
-use serde_json::json;
-use std::sync::{Arc, Mutex};
-use zeroclaw::agent::agent::Agent;
-use zeroclaw::agent::dispatcher::{NativeToolDispatcher, XmlToolDispatcher};
-use zeroclaw::agent::memory_loader::MemoryLoader;
-use zeroclaw::config::MemoryConfig;
-use zeroclaw::memory;
-use zeroclaw::memory::Memory;
-use zeroclaw::observability::{NoopObserver, Observer};
-use zeroclaw::providers::traits::ChatMessage;
-use zeroclaw::providers::{
+use dx::agent::agent::Agent;
+use dx::agent::dispatcher::{NativeToolDispatcher, XmlToolDispatcher};
+use dx::agent::memory_loader::MemoryLoader;
+use dx::config::MemoryConfig;
+use dx::memory;
+use dx::memory::Memory;
+use dx::observability::{NoopObserver, Observer};
+use dx::providers::traits::ChatMessage;
+use dx::providers::{
     ChatRequest, ChatResponse, ConversationMessage, Provider, ProviderRuntimeOptions, ToolCall,
 };
-use zeroclaw::tools::{Tool, ToolResult};
+use dx::tools::{Tool, ToolResult};
+use serde_json::json;
+use std::sync::{Arc, Mutex};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mock infrastructure
@@ -671,8 +671,8 @@ async fn e2e_empty_memory_context_passthrough() {
 #[tokio::test]
 #[ignore = "requires live OpenAI Codex API key"]
 async fn e2e_live_openai_codex_multi_turn() {
-    use zeroclaw::providers::openai_codex::OpenAiCodexProvider;
-    use zeroclaw::providers::traits::Provider;
+    use dx::providers::openai_codex::OpenAiCodexProvider;
+    use dx::providers::traits::Provider;
 
     let provider = OpenAiCodexProvider::new(&ProviderRuntimeOptions::default(), None).unwrap();
     let model = "gpt-5.3-codex";
@@ -721,12 +721,12 @@ async fn e2e_live_openai_codex_multi_turn() {
 #[tokio::test]
 #[ignore = "requires live provider API key"]
 async fn e2e_live_research_phase() {
+    use dx::agent::research::{run_research_phase, should_trigger};
+    use dx::config::{ResearchPhaseConfig, ResearchTrigger};
+    use dx::observability::NoopObserver;
+    use dx::providers::openai_codex::OpenAiCodexProvider;
+    use dx::tools::{Tool, ToolResult};
     use std::sync::Arc;
-    use zeroclaw::agent::research::{run_research_phase, should_trigger};
-    use zeroclaw::config::{ResearchPhaseConfig, ResearchTrigger};
-    use zeroclaw::observability::NoopObserver;
-    use zeroclaw::providers::openai_codex::OpenAiCodexProvider;
-    use zeroclaw::tools::{Tool, ToolResult};
 
     // ── Test should_trigger ──
     let config = ResearchPhaseConfig {
@@ -803,7 +803,7 @@ async fn e2e_live_research_phase() {
     let provider = OpenAiCodexProvider::new(&ProviderRuntimeOptions::default(), None)
         .expect("OpenAI Codex provider should initialize for research test");
     let tools: Vec<Box<dyn Tool>> = vec![Box::new(EchoTool)];
-    let observer: Arc<dyn zeroclaw::observability::Observer> = Arc::new(NoopObserver);
+    let observer: Arc<dyn dx::observability::Observer> = Arc::new(NoopObserver);
 
     let research_config = ResearchPhaseConfig {
         enabled: true,
@@ -868,7 +868,7 @@ async fn e2e_live_research_phase() {
 /// This test uses mocks to verify the integration without external dependencies.
 #[tokio::test]
 async fn e2e_agent_research_phase_integration() {
-    use zeroclaw::config::{ResearchPhaseConfig, ResearchTrigger};
+    use dx::config::{ResearchPhaseConfig, ResearchTrigger};
 
     // Create a recording provider to capture what the agent sends
     let (provider, recorded) = RecordingProvider::new(vec![
@@ -918,7 +918,7 @@ async fn e2e_agent_research_phase_integration() {
 /// Validates that Always trigger activates research on every message.
 #[tokio::test]
 async fn e2e_agent_research_always_trigger() {
-    use zeroclaw::config::{ResearchPhaseConfig, ResearchTrigger};
+    use dx::config::{ResearchPhaseConfig, ResearchTrigger};
 
     let (provider, recorded) = RecordingProvider::new(vec![
         // Research phase response
@@ -964,8 +964,8 @@ async fn e2e_agent_research_always_trigger() {
 /// The provider returns XML tool calls in text, which should be parsed and executed.
 #[tokio::test]
 async fn e2e_agent_research_prompt_guided() {
-    use zeroclaw::config::{ResearchPhaseConfig, ResearchTrigger};
-    use zeroclaw::providers::traits::ProviderCapabilities;
+    use dx::config::{ResearchPhaseConfig, ResearchTrigger};
+    use dx::providers::traits::ProviderCapabilities;
 
     /// Mock provider that does NOT support native tools (like Gemini).
     /// Returns XML tool calls in text that should be parsed by research phase.
@@ -1078,7 +1078,7 @@ async fn e2e_agent_research_prompt_guided() {
 /// Validates that disabled research phase skips research entirely.
 #[tokio::test]
 async fn e2e_agent_research_disabled() {
-    use zeroclaw::config::{ResearchPhaseConfig, ResearchTrigger};
+    use dx::config::{ResearchPhaseConfig, ResearchTrigger};
 
     let (provider, recorded) = RecordingProvider::new(vec![text_response("Direct response")]);
 

@@ -21,7 +21,7 @@ if ! command -v git >/dev/null 2>&1; then
   exit 1
 fi
 
-TEMP_DIR="$(mktemp -d -t zeroclaw-install-XXXXXX)"
+TEMP_DIR="$(mktemp -d -t dx-install-XXXXXX)"
 cleanup() {
   rm -rf "$TEMP_DIR"
 }

@@ -1,8 +1,8 @@
-//! SkillForge — Skill auto-discovery, evaluation, and integration engine.
+//! DXForge — Skill auto-discovery, evaluation, and integration engine.
 //!
 //! Pipeline: Scout → Evaluate → Integrate
 //! Discovers skills from external sources, scores them, and generates
-//! ZeroClaw-compatible manifests for qualified candidates.
+//! DX-compatible manifests for qualified candidates.
 
 pub mod evaluate;
 pub mod integrate;
@@ -21,7 +21,7 @@ use self::scout::{GitHubScout, Scout, ScoutResult, ScoutSource};
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct SkillForgeConfig {
+pub struct DXForgeConfig {
     #[serde(default)]
     pub enabled: bool,
     #[serde(default = "default_auto_integrate")]
@@ -56,7 +56,7 @@ fn default_output_dir() -> String {
     "./skills".into()
 }
 
-impl Default for SkillForgeConfig {
+impl Default for DXForgeConfig {
     fn default() -> Self {
         Self {
             enabled: false,
@@ -70,9 +70,9 @@ impl Default for SkillForgeConfig {
     }
 }
 
-impl std::fmt::Debug for SkillForgeConfig {
+impl std::fmt::Debug for DXForgeConfig {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("SkillForgeConfig")
+        f.debug_struct("DXForgeConfig")
             .field("enabled", &self.enabled)
             .field("auto_integrate", &self.auto_integrate)
             .field("sources", &self.sources)
@@ -99,17 +99,17 @@ pub struct ForgeReport {
 }
 
 // ---------------------------------------------------------------------------
-// SkillForge
+// DXForge
 // ---------------------------------------------------------------------------
 
-pub struct SkillForge {
-    config: SkillForgeConfig,
+pub struct DXForge {
+    config: DXForgeConfig,
     evaluator: Evaluator,
     integrator: Integrator,
 }
 
-impl SkillForge {
-    pub fn new(config: SkillForgeConfig) -> Self {
+impl DXForge {
+    pub fn new(config: DXForgeConfig) -> Self {
         let evaluator = Evaluator::new(config.min_score);
         let integrator = Integrator::new(config.output_dir.clone());
         Self {
@@ -122,7 +122,7 @@ impl SkillForge {
     /// Run the full pipeline: Scout → Evaluate → Integrate.
     pub async fn forge(&self) -> Result<ForgeReport> {
         if !self.config.enabled {
-            warn!("SkillForge is disabled — skipping");
+            warn!("DXForge is disabled — skipping");
             return Ok(ForgeReport {
                 discovered: 0,
                 evaluated: 0,
@@ -233,11 +233,11 @@ mod tests {
 
     #[tokio::test]
     async fn disabled_forge_returns_empty_report() {
-        let cfg = SkillForgeConfig {
+        let cfg = DXForgeConfig {
             enabled: false,
             ..Default::default()
         };
-        let forge = SkillForge::new(cfg);
+        let forge = DXForge::new(cfg);
         let report = forge.forge().await.unwrap();
         assert_eq!(report.discovered, 0);
         assert_eq!(report.auto_integrated, 0);
@@ -245,7 +245,7 @@ mod tests {
 
     #[test]
     fn default_config_values() {
-        let cfg = SkillForgeConfig::default();
+        let cfg = DXForgeConfig::default();
         assert!(!cfg.enabled);
         assert!(cfg.auto_integrate);
         assert_eq!(cfg.scan_interval_hours, 24);

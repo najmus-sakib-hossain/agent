@@ -1,4 +1,4 @@
-# ZeroClaw Providers Reference
+# DX Providers Reference
 
 This document maps provider IDs, aliases, and credential environment variables.
 
@@ -7,7 +7,7 @@ Last verified: **February 28, 2026**.
 ## How to List Providers
 
 ```bash
-zeroclaw providers
+dx providers
 ```
 
 ## Credential Resolution Order
@@ -94,7 +94,7 @@ credential is not reused for fallback providers.
   - Higher quotas and more models available with paid API key
 - **Authentication**: `QWEN_OAUTH_TOKEN` (for OAuth) or `DASHSCOPE_API_KEY` (for API key)
 - **Recommended Model**: `qwen3-coder-plus` - Optimized for coding tasks
-- **Quota Tracking**: `zeroclaw providers-quota --provider qwen-code` shows static quota info (`?/1000` - unknown remaining, 1000/day total)
+- **Quota Tracking**: `dx providers-quota --provider qwen-code` shows static quota info (`?/1000` - unknown remaining, 1000/day total)
   - Qwen OAuth API does not return rate limit headers
   - Actual request counting requires local counter (not implemented)
   - Rate limit errors are detected and parsed for retry backoff
@@ -116,14 +116,14 @@ Minimal setup example:
 
 ```bash
 export ARK_API_KEY="your-ark-api-key"
-zeroclaw onboard --provider volcengine --api-key "$ARK_API_KEY" --model doubao-1-5-pro-32k-250115 --force
+dx onboard --provider volcengine --api-key "$ARK_API_KEY" --model doubao-1-5-pro-32k-250115 --force
 ```
 
 Quick validation:
 
 ```bash
-zeroclaw models refresh --provider volcengine
-zeroclaw agent --provider volcengine --model doubao-1-5-pro-32k-250115 -m "ping"
+dx models refresh --provider volcengine
+dx agent --provider volcengine --model doubao-1-5-pro-32k-250115 -m "ping"
 ```
 
 ### SiliconFlow Notes
@@ -139,28 +139,28 @@ Minimal setup example:
 
 ```bash
 export SILICONFLOW_API_KEY="your-siliconflow-api-key"
-zeroclaw onboard --provider siliconflow --api-key "$SILICONFLOW_API_KEY" --model Pro/zai-org/GLM-4.7 --force
+dx onboard --provider siliconflow --api-key "$SILICONFLOW_API_KEY" --model Pro/zai-org/GLM-4.7 --force
 ```
 
 Quick validation:
 
 ```bash
-zeroclaw models refresh --provider siliconflow
-zeroclaw agent --provider siliconflow --model Pro/zai-org/GLM-4.7 -m "ping"
+dx models refresh --provider siliconflow
+dx agent --provider siliconflow --model Pro/zai-org/GLM-4.7 -m "ping"
 ```
 
 ### Ollama Vision Notes
 
 - Provider ID: `ollama`
 - Vision input is supported through user message image markers: ``[IMAGE:<source>]``.
-- After multimodal normalization, ZeroClaw sends image payloads through Ollama's native `messages[].images` field.
-- If a non-vision provider is selected, ZeroClaw returns a structured capability error instead of silently ignoring images.
+- After multimodal normalization, DX sends image payloads through Ollama's native `messages[].images` field.
+- If a non-vision provider is selected, DX returns a structured capability error instead of silently ignoring images.
 
 ### Ollama Cloud Routing Notes
 
 - Use `:cloud` model suffix only with a remote Ollama endpoint.
 - Remote endpoint should be set in `api_url` (example: `https://ollama.com`).
-- ZeroClaw normalizes a trailing `/api` in `api_url` automatically.
+- DX normalizes a trailing `/api` in `api_url` automatically.
 - If `default_model` ends with `:cloud` while `api_url` is local or unset, config validation fails early with an actionable error.
 - Local Ollama model discovery intentionally excludes `:cloud` entries to avoid selecting cloud-only models in local mode.
 
@@ -176,7 +176,7 @@ zeroclaw agent --provider siliconflow --model Pro/zai-org/GLM-4.7 -m "ping"
 - Provider ID: `llamacpp` (alias: `llama.cpp`)
 - Default endpoint: `http://localhost:8080/v1`
 - API key is optional by default; set `LLAMACPP_API_KEY` only when `llama-server` is started with `--api-key`.
-- Model discovery: `zeroclaw models refresh --provider llamacpp`
+- Model discovery: `dx models refresh --provider llamacpp`
 
 ### SGLang Server Notes
 
@@ -184,21 +184,21 @@ zeroclaw agent --provider siliconflow --model Pro/zai-org/GLM-4.7 -m "ping"
 - Default endpoint: `http://localhost:30000/v1`
 - API key is optional by default; set `SGLANG_API_KEY` only when the server requires authentication.
 - Tool calling requires launching SGLang with `--tool-call-parser` (e.g. `hermes`, `llama3`, `qwen25`).
-- Model discovery: `zeroclaw models refresh --provider sglang`
+- Model discovery: `dx models refresh --provider sglang`
 
 ### vLLM Server Notes
 
 - Provider ID: `vllm`
 - Default endpoint: `http://localhost:8000/v1`
 - API key is optional by default; set `VLLM_API_KEY` only when the server requires authentication.
-- Model discovery: `zeroclaw models refresh --provider vllm`
+- Model discovery: `dx models refresh --provider vllm`
 
 ### Osaurus Server Notes
 
 - Provider ID: `osaurus`
 - Default endpoint: `http://localhost:1337/v1`
 - API key defaults to `"osaurus"` but is optional; set `OSAURUS_API_KEY` to override or leave unset for keyless access.
-- Model discovery: `zeroclaw models refresh --provider osaurus`
+- Model discovery: `dx models refresh --provider osaurus`
 - [Osaurus](https://github.com/dinoki-ai/osaurus) is a unified AI edge runtime for macOS (Apple Silicon) that combines local MLX inference with cloud provider proxying through a single endpoint.
 - Supports multiple API formats simultaneously: OpenAI-compatible (`/v1/chat/completions`), Anthropic (`/messages`), Ollama (`/chat`), and Open Responses (`/v1/responses`).
 - Built-in MCP (Model Context Protocol) support for tool and context server connectivity.
@@ -233,7 +233,7 @@ Behavior:
 ### Ollama Vision Override
 
 Some Ollama models support vision (e.g. `llava`, `llama3.2-vision`) while others do not.
-Since ZeroClaw cannot auto-detect this, you can override it in `config.toml`:
+Since DX cannot auto-detect this, you can override it in `config.toml`:
 
 ```toml
 default_provider = "ollama"
@@ -278,7 +278,7 @@ Behavior:
 - Canonical provider ID: `nvidia`
 - Aliases: `nvidia-nim`, `build.nvidia.com`
 - Base API URL: `https://integrate.api.nvidia.com/v1`
-- Model discovery: `zeroclaw models refresh --provider nvidia`
+- Model discovery: `dx models refresh --provider nvidia`
 
 Recommended starter model IDs (verified against NVIDIA API catalog on February 18, 2026):
 
@@ -418,8 +418,8 @@ Recommended workflow:
 1. Keep call sites stable (`hint:reasoning`, `hint:semantic`).
 2. Change only the target model under `[[model_routes]]` or `[[embedding_routes]]`.
 3. Run:
-   - `zeroclaw doctor`
-   - `zeroclaw status`
+   - `dx doctor`
+   - `dx status`
 4. Smoke test one representative flow (chat + memory retrieval) before rollout.
 
 This minimizes breakage because integrations and prompts do not need to change when model IDs are upgraded.

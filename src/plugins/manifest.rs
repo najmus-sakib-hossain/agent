@@ -1,14 +1,14 @@
-//! Plugin manifest — the `zeroclaw.plugin.toml` descriptor.
+//! Plugin manifest — the `dx.plugin.toml` descriptor.
 //!
 //! Mirrors OpenClaw's `openclaw.plugin.json` but uses TOML to match
-//! ZeroClaw's existing config format.
+//! DX's existing config format.
 
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
 /// Filename plugins must use for their manifest.
-pub const PLUGIN_MANIFEST_FILENAME: &str = "zeroclaw.plugin.toml";
+pub const PLUGIN_MANIFEST_FILENAME: &str = "dx.plugin.toml";
 
 /// Parsed plugin manifest.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -37,7 +37,7 @@ pub enum ManifestLoadResult {
     },
 }
 
-/// Load and parse `zeroclaw.plugin.toml` from `root_dir`.
+/// Load and parse `dx.plugin.toml` from `root_dir`.
 pub fn load_manifest(root_dir: &Path) -> ManifestLoadResult {
     let manifest_path = root_dir.join(PLUGIN_MANIFEST_FILENAME);
     if !manifest_path.exists() {

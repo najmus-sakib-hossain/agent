@@ -10,11 +10,11 @@ mod audit;
 mod templates;
 
 const OPEN_SKILLS_REPO_URL: &str = "https://github.com/besoeasy/open-skills";
-const OPEN_SKILLS_SYNC_MARKER: &str = ".zeroclaw-open-skills-sync";
+const OPEN_SKILLS_SYNC_MARKER: &str = ".dx-open-skills-sync";
 const OPEN_SKILLS_SYNC_INTERVAL_SECS: u64 = 60 * 60 * 24 * 7;
 
 /// A skill is a user-defined or community-built capability.
-/// Skills live in `~/.zeroclaw/workspace/skills/<name>/SKILL.md`
+/// Skills live in `~/.dx/workspace/skills/<name>/SKILL.md`
 /// and can include tool definitions, prompts, and automation scripts.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Skill {
@@ -250,7 +250,7 @@ fn open_skills_enabled_from_sources(
         }
         if !raw.trim().is_empty() {
             tracing::warn!(
-                "Ignoring invalid ZEROCLAW_OPEN_SKILLS_ENABLED (valid: 1|0|true|false|yes|no|on|off)"
+                "Ignoring invalid DX_OPEN_SKILLS_ENABLED (valid: 1|0|true|false|yes|no|on|off)"
             );
         }
     }
@@ -259,7 +259,7 @@ fn open_skills_enabled_from_sources(
 }
 
 fn open_skills_enabled(config_open_skills_enabled: Option<bool>) -> bool {
-    let env_override = std::env::var("ZEROCLAW_OPEN_SKILLS_ENABLED").ok();
+    let env_override = std::env::var("DX_OPEN_SKILLS_ENABLED").ok();
     open_skills_enabled_from_sources(config_open_skills_enabled, env_override.as_deref())
 }
 
@@ -287,7 +287,7 @@ fn resolve_open_skills_dir_from_sources(
 }
 
 fn resolve_open_skills_dir(config_open_skills_dir: Option<&str>) -> Option<PathBuf> {
-    let env_dir = std::env::var("ZEROCLAW_OPEN_SKILLS_DIR").ok();
+    let env_dir = std::env::var("DX_OPEN_SKILLS_DIR").ok();
     let home_dir = UserDirs::new().map(|dirs| dirs.home_dir().to_path_buf());
     resolve_open_skills_dir_from_sources(
         env_dir.as_deref(),
@@ -643,7 +643,7 @@ pub fn init_skills_dir(workspace_dir: &Path) -> Result<()> {
     if !readme.exists() {
         std::fs::write(
             &readme,
-            "# ZeroClaw Skills\n\n\
+            "# DX Skills\n\n\
              Each subdirectory is a skill. Create a `SKILL.toml` or `SKILL.md` file inside.\n\n\
              ## SKILL.toml format\n\n\
              ```toml\n\
@@ -664,8 +664,8 @@ pub fn init_skills_dir(workspace_dir: &Path) -> Result<()> {
              The agent will read it and follow the instructions.\n\n\
              ## Installing community skills\n\n\
              ```bash\n\
-             zeroclaw skills install <source>\n\
-             zeroclaw skills list\n\
+             dx skills install <source>\n\
+             dx skills list\n\
              ```\n",
         )?;
     }
@@ -882,7 +882,7 @@ fn install_git_skill_source(
     }
 }
 
-// ─── Scaffold (zeroclaw skill new) ───────────────────────────────────────────
+// ─── Scaffold (dx skill new) ───────────────────────────────────────────
 
 /// Create a new skill project from a named template.
 ///
@@ -909,7 +909,7 @@ pub fn scaffold_skill(
     let tmpl = templates::find(template_name).ok_or_else(|| {
         let names: Vec<&str> = templates::ALL.iter().map(|t| t.name).collect();
         anyhow::anyhow!(
-            "Unknown template '{template_name}'. Run 'zeroclaw skill templates' to list available templates.\nAvailable: {}",
+            "Unknown template '{template_name}'. Run 'dx skill templates' to list available templates.\nAvailable: {}",
             names.join(", ")
         )
     })?;
@@ -974,7 +974,7 @@ fn write_skill_md(
              ```\n\n\
              ## Test\n\n\
              ```bash\n\
-             zeroclaw skill test . --args '{test_args}'\n\
+             dx skill test . --args '{test_args}'\n\
              ```\n"
         ),
     )?;
@@ -996,7 +996,7 @@ fn write_readme(dir: &std::path::Path, name: &str, language: &str, test_args: &s
             "Requires: tinygo (https://tinygo.org)",
         ),
         "python" => (
-            "componentize-py -d wit/ -w zeroclaw-skill componentize main -o tool.wasm",
+            "componentize-py -d wit/ -w dx-skill componentize main -o tool.wasm",
             "Requires: componentize-py (pip install componentize-py)",
         ),
         _ => ("make", ""),
@@ -1006,7 +1006,7 @@ fn write_readme(dir: &std::path::Path, name: &str, language: &str, test_args: &s
         dir.join("README.md"),
         format!(
             "# {name}\n\n\
-             A ZeroClaw skill ({language}).\n\n\
+             A DX skill ({language}).\n\n\
              ## Protocol\n\n\
              Reads a JSON object from **stdin**, writes JSON to **stdout**:\n\n\
              ```json\n\
@@ -1022,18 +1022,18 @@ fn write_readme(dir: &std::path::Path, name: &str, language: &str, test_args: &s
              ```\n\n\
              ## Test\n\n\
              ```bash\n\
-             zeroclaw skill test . --args '{test_args}'\n\
+             dx skill test . --args '{test_args}'\n\
              ```\n\n\
              ## Publish\n\n\
              ```bash\n\
-             zeroclaw skill install .\n\
+             dx skill install .\n\
              ```\n"
         ),
     )?;
     Ok(())
 }
 
-// ─── Local test (zeroclaw skill test) ────────────────────────────────────────
+// ─── Local test (dx skill test) ────────────────────────────────────────
 
 /// Run a WASM tool locally using the system `wasmtime` CLI binary.
 ///
@@ -1648,7 +1648,7 @@ fn extract_zip_skill_meta(
 
 /// Install a skill from a local `.zip` file (e.g. downloaded manually from ClawhHub).
 ///
-/// Usage: `zeroclaw skill install /path/to/skill.zip`
+/// Usage: `dx skill install /path/to/skill.zip`
 fn install_local_zip_source(zip_path: &Path, skills_path: &Path) -> Result<(PathBuf, usize)> {
     let bytes = std::fs::read(zip_path)
         .with_context(|| format!("failed to read zip file: {}", zip_path.display()))?;
@@ -1713,7 +1713,7 @@ fn extract_zip_bytes_to_skills(
     let skill_dir = skills_path.join(&skill_name);
     if skill_dir.exists() {
         anyhow::bail!(
-            "skill '{}' already exists at {}; run 'zeroclaw skill remove {}' first",
+            "skill '{}' already exists at {}; run 'dx skill remove {}' first",
             skill_name,
             skill_dir.display(),
             skill_name
@@ -1751,7 +1751,7 @@ fn extract_zip_bytes_to_skills(
         }
     }
 
-    // Write a minimal SKILL.toml so the skill appears in `zeroclaw skill list`
+    // Write a minimal SKILL.toml so the skill appears in `dx skill list`
     // (only if neither SKILL.toml nor SKILL.md was included in the zip)
     let toml_path = skill_dir.join("SKILL.toml");
     if !toml_path.exists() && !skill_dir.join("SKILL.md").exists() {
@@ -1890,14 +1890,14 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
                 }
                 "python" => {
                     println!("    pip install componentize-py");
-                    println!("    componentize-py -d wit/ -w zeroclaw-skill componentize main -o tool.wasm");
+                    println!("    componentize-py -d wit/ -w dx-skill componentize main -o tool.wasm");
                 }
                 _ => {}
             }
-            println!("    zeroclaw skill test . --args '{}'", tmpl.test_args);
+            println!("    dx skill test . --args '{}'", tmpl.test_args);
             println!();
             println!(
-                "  {} 'zeroclaw skill test' requires the {} CLI:",
+                "  {} 'dx skill test' requires the {} CLI:",
                 console::style("Note:").dim(),
                 console::style("wasmtime").cyan()
             );
@@ -1957,10 +1957,12 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
             if skills.is_empty() {
                 println!("No skills installed.");
                 println!();
-                println!("  Create one: mkdir -p ~/.zeroclaw/workspace/skills/my-skill");
-                println!("              echo '# My Skill' > ~/.zeroclaw/workspace/skills/my-skill/SKILL.md");
+                println!("  Create one: mkdir -p ~/.dx/workspace/skills/my-skill");
+                println!(
+                    "              echo '# My Skill' > ~/.dx/workspace/skills/my-skill/SKILL.md"
+                );
                 println!();
-                println!("  Or install: zeroclaw skills install <source>");
+                println!("  Or install: dx skills install <source>");
             } else {
                 println!("Installed skills ({}):", skills.len());
                 println!();
@@ -2047,7 +2049,7 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
                     installed_dir.display(),
                     files_written
                 );
-                println!("  Run 'zeroclaw skill list' to verify the new tools are available.");
+                println!("  Run 'dx skill list' to verify the new tools are available.");
             } else if is_zip_url_source(&source) {
                 // Generic zip-URL install: supports `zip:https://...` prefix and
                 // direct `.zip` URLs.  No system `unzip` binary required.
@@ -2061,7 +2063,7 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
                     installed_dir.display(),
                     files_written
                 );
-                println!("  Run 'zeroclaw skill list' to verify the new tools are available.");
+                println!("  Run 'dx skill list' to verify the new tools are available.");
             } else if is_git_source(&source) {
                 let (installed_dir, files_scanned) =
                     install_git_skill_source(&source, &skills_path, config.skills.allow_scripts)
@@ -2085,7 +2087,7 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
                     installed_dir.display(),
                     files_written
                 );
-                println!("  Run 'zeroclaw skill list' to verify the new tools are available.");
+                println!("  Run 'dx skill list' to verify the new tools are available.");
             } else {
                 // Check if source is a local .zip file before falling back to directory install
                 let source_path = std::path::Path::new(&source);
@@ -2103,7 +2105,7 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
                         dest.display(),
                         files_written
                     );
-                    println!("  Run 'zeroclaw skill list' to verify the new tools are available.");
+                    println!("  Run 'dx skill list' to verify the new tools are available.");
                 } else {
                     let (dest, files_scanned) = install_local_skill_source(
                         &source,
@@ -2173,11 +2175,11 @@ pub fn handle_command(command: crate::SkillCommands, config: &crate::config::Con
             }
             println!();
             println!("  Usage:");
-            println!("    zeroclaw skill new <name> --template <template-name>");
+            println!("    dx skill new <name> --template <template-name>");
             println!();
             println!("  Example:");
             println!(
-                "    zeroclaw skill new my_weather --template {}",
+                "    dx skill new my_weather --template {}",
                 console::style("weather_lookup").cyan()
             );
             Ok(())
@@ -2589,9 +2591,9 @@ description = "Bare minimum"
 
     #[test]
     fn skills_dir_path() {
-        let base = std::path::Path::new("/home/user/.zeroclaw");
+        let base = std::path::Path::new("/home/user/.dx");
         let dir = skills_dir(base);
-        assert_eq!(dir, PathBuf::from("/home/user/.zeroclaw/skills"));
+        assert_eq!(dir, PathBuf::from("/home/user/.dx/skills"));
     }
 
     #[test]
@@ -2659,8 +2661,8 @@ description = "Bare minimum"
     #[test]
     fn load_skills_with_config_reads_open_skills_dir_without_network() {
         let _env_guard = open_skills_env_lock().lock().unwrap();
-        let _enabled_guard = EnvVarGuard::unset("ZEROCLAW_OPEN_SKILLS_ENABLED");
-        let _dir_guard = EnvVarGuard::unset("ZEROCLAW_OPEN_SKILLS_DIR");
+        let _enabled_guard = EnvVarGuard::unset("DX_OPEN_SKILLS_ENABLED");
+        let _dir_guard = EnvVarGuard::unset("DX_OPEN_SKILLS_DIR");
 
         let dir = tempfile::tempdir().unwrap();
         let workspace_dir = dir.path().join("workspace");
@@ -2702,9 +2704,9 @@ description = "Bare minimum"
     fn registry_install_dir_name_is_package_name_only() {
         // Simulate the naming logic from install_registry_skill_source.
         for (source, expected_dir) in [
-            ("zeroclaw-org/weather-lookup", "weather-lookup"),
-            ("zeroclaw-org/calculator", "calculator"),
-            ("zeroclaw-user/my_tool", "my_tool"),
+            ("dx-org/weather-lookup", "weather-lookup"),
+            ("dx-org/calculator", "calculator"),
+            ("dx-user/my_tool", "my_tool"),
         ] {
             let parts: Vec<&str> = source.splitn(3, '/').collect();
             let pkg_name = parts[1];
@@ -2720,7 +2722,7 @@ description = "Bare minimum"
 
     #[test]
     fn is_registry_source_accepts_valid_namespace_name() {
-        assert!(is_registry_source("zeroclaw/weather-lookup"));
+        assert!(is_registry_source("dx/weather-lookup"));
         assert!(is_registry_source("community/my_tool"));
         assert!(is_registry_source("org-name/tool_name"));
         assert!(is_registry_source("ns/name@1.0.0")); // version suffix
@@ -2904,7 +2906,7 @@ description = "Bare minimum"
     fn is_clawhub_source_rejects_other_domains() {
         assert!(!is_clawhub_source("https://github.com/org/skill"));
         assert!(!is_clawhub_source("https://example.com/skill.zip"));
-        assert!(!is_clawhub_source("zeroclaw/skill"));
+        assert!(!is_clawhub_source("dx/skill"));
     }
 
     #[test]
@@ -2968,7 +2970,7 @@ description = "Bare minimum"
 
     #[test]
     fn is_zip_url_source_rejects_other_formats() {
-        assert!(!is_zip_url_source("zeroclaw/skill"));
+        assert!(!is_zip_url_source("dx/skill"));
         assert!(!is_zip_url_source("./local/skill.zip"));
         assert!(!is_zip_url_source("/absolute/path/skill.zip"));
     }

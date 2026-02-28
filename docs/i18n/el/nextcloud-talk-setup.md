@@ -1,6 +1,6 @@
 # Ρύθμιση Nextcloud Talk
 
-Αυτός ο οδηγός περιγράφει τη διαδικασία ενσωμάτωσης του Nextcloud Talk με το ZeroClaw.
+Αυτός ο οδηγός περιγράφει τη διαδικασία ενσωμάτωσης του Nextcloud Talk με το DX.
 
 ## 1. Λειτουργία Ενσωμάτωσης
 
@@ -10,7 +10,7 @@
 
 ## 2. Ρύθμιση
 
-Στο αρχείο `~/.zeroclaw/config.toml`, προσθέστε την ενότητα `[channels_config.nextcloud_talk]`:
+Στο αρχείο `~/.dx/config.toml`, προσθέστε την ενότητα `[channels_config.nextcloud_talk]`:
 
 ```toml
 [channels_config.nextcloud_talk]
@@ -31,10 +31,10 @@ allowed_users = ["*"]
 
 ## 3. Ρύθμιση Τελικού Σημείου (Endpoint)
 
-Ξεκινήστε τον daemon του ZeroClaw για να εκθέσετε το webhook:
+Ξεκινήστε τον daemon του DX για να εκθέσετε το webhook:
 
 ```bash
-zeroclaw daemon
+dx daemon
 ```
 
 Στο Nextcloud Talk, ορίστε το URL του webhook για το bot σας ως:
@@ -42,7 +42,7 @@ zeroclaw daemon
 
 ## 4. Επαλήθευση Υπογραφής
 
-Εάν έχει οριστεί `webhook_secret`, το ZeroClaw επαληθεύει τις κεφαλίδες:
+Εάν έχει οριστεί `webhook_secret`, το DX επαληθεύει τις κεφαλίδες:
 - `X-Nextcloud-Talk-Random`
 - `X-Nextcloud-Talk-Signature`
 
@@ -50,7 +50,7 @@ zeroclaw daemon
 
 ## 5. Φιλτράρισμα και Δρομολόγηση
 
-- Το ZeroClaw αγνοεί συμβάντα που προέρχονται από άλλα bots (`actorType = bots`).
+- Το DX αγνοεί συμβάντα που προέρχονται από άλλα bots (`actorType = bots`).
 - Αγνοούνται συμβάντα συστήματος ή συμβάντα που δεν περιέχουν μηνύματα.
 - Οι απαντήσεις δρομολογούνται αυτόματα στο σωστό δωμάτιο χρησιμοποιώντας το token δωματίου από το payload του webhook.
 
@@ -58,7 +58,7 @@ zeroclaw daemon
 
 1. Ορίστε προσωρινά `allowed_users = ["*"]`.
 2. Στείλτε ένα δοκιμαστικό μήνυμα στο δωμάτιο του Talk.
-3. Επιβεβαιώστε τη λήψη και την απάντηση από το ZeroClaw.
+3. Επιβεβαιώστε τη λήψη και την απάντηση από το DX.
 4. Περιορίστε την πρόσβαση ορίζοντας συγκεκριμένα ID χρηστών στο `allowed_users`.
 
 ## 7. Αντιμετώπιση Προβλημάτων

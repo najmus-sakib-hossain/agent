@@ -486,7 +486,7 @@ mod tests {
             UrlAccessConfig::default(),
             500_000,
             30,
-            "ZeroClaw/1.0".to_string(),
+            "DX/1.0".to_string(),
         )
     }
 

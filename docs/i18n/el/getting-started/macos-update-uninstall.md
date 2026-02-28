@@ -1,20 +1,20 @@
 # Οδηγός Ενημέρωσης και Απεγκατάστασης στο macOS
 
-Αυτή η σελίδα τεκμηριώνει τις υποστηριζόμενες διαδικασίες ενημέρωσης και απεγκατάστασης του ZeroClaw στο macOS (OS X).
+Αυτή η σελίδα τεκμηριώνει τις υποστηριζόμενες διαδικασίες ενημέρωσης και απεγκατάστασης του DX στο macOS (OS X).
 
 Τελευταία επαλήθευση: **22 Φεβρουαρίου 2026**.
 
 ## 1) Έλεγχος τρέχουσας μεθόδου εγκατάστασης
 
 ```bash
-which zeroclaw
-zeroclaw --version
+which dx
+dx --version
 ```
 
 Τυπικές τοποθεσίες:
 
-- Homebrew: `/opt/homebrew/bin/zeroclaw` (Apple Silicon) ή `/usr/local/bin/zeroclaw` (Intel)
-- Cargo/bootstrap/χειροκίνητη: `~/.cargo/bin/zeroclaw`
+- Homebrew: `/opt/homebrew/bin/dx` (Apple Silicon) ή `/usr/local/bin/dx` (Intel)
+- Cargo/bootstrap/χειροκίνητη: `~/.cargo/bin/dx`
 
 Αν υπάρχουν και οι δύο, η σειρά `PATH` του shell σας καθορίζει ποια εκτελείται.
 
@@ -24,8 +24,8 @@ zeroclaw --version
 
 ```bash
 brew update
-brew upgrade zeroclaw
-zeroclaw --version
+brew upgrade dx
+dx --version
 ```
 
 ### Β) Εγκατάσταση μέσω Clone + bootstrap
@@ -35,7 +35,7 @@ zeroclaw --version
 ```bash
 git pull --ff-only
 ./bootstrap.sh --prefer-prebuilt
-zeroclaw --version
+dx --version
 ```
 
 Αν θέλετε ενημέρωση μόνο από πηγαίο κώδικα:
@@ -43,7 +43,7 @@ zeroclaw --version
 ```bash
 git pull --ff-only
 cargo install --path . --force --locked
-zeroclaw --version
+dx --version
 ```
 
 ### Γ) Χειροκίνητη εγκατάσταση προκατασκευασμένου binary
@@ -51,7 +51,7 @@ zeroclaw --version
 Επαναλάβετε τη ροή λήψης/εγκατάστασης με το πιο πρόσφατο αρχείο έκδοσης και επαληθεύστε:
 
 ```bash
-zeroclaw --version
+dx --version
 ```
 
 ## 3) Απεγκατάσταση στο macOS
@@ -61,27 +61,27 @@ zeroclaw --version
 Αυτό αποτρέπει τη συνέχεια εκτέλεσης του daemon μετά την αφαίρεση του binary.
 
 ```bash
-zeroclaw service stop || true
-zeroclaw service uninstall || true
+dx service stop || true
+dx service uninstall || true
 ```
 
 Αντικείμενα υπηρεσίας που αφαιρούνται από την `service uninstall`:
 
-- `~/Library/LaunchAgents/com.zeroclaw.daemon.plist`
+- `~/Library/LaunchAgents/com.dx.daemon.plist`
 
 ### Β) Αφαίρεση binary ανά μέθοδο εγκατάστασης
 
 Homebrew:
 
 ```bash
-brew uninstall zeroclaw
+brew uninstall dx
 ```
 
-Cargo/bootstrap/χειροκίνητη (`~/.cargo/bin/zeroclaw`):
+Cargo/bootstrap/χειροκίνητη (`~/.cargo/bin/dx`):
 
 ```bash
-cargo uninstall zeroclaw || true
-rm -f ~/.cargo/bin/zeroclaw
+cargo uninstall dx || true
+rm -f ~/.cargo/bin/dx
 ```
 
 ### Γ) Προαιρετικά: αφαίρεση τοπικών δεδομένων εκτέλεσης
@@ -89,20 +89,20 @@ rm -f ~/.cargo/bin/zeroclaw
 Εκτελέστε αυτό μόνο αν θέλετε πλήρη εκκαθάριση ρυθμίσεων, προφίλ auth, logs και κατάστασης workspace.
 
 ```bash
-rm -rf ~/.zeroclaw
+rm -rf ~/.dx
 ```
 
 ## 4) Επαλήθευση ολοκλήρωσης απεγκατάστασης
 
 ```bash
-command -v zeroclaw || echo "zeroclaw binary not found"
-pgrep -fl zeroclaw || echo "No running zeroclaw process"
+command -v dx || echo "dx binary not found"
+pgrep -fl dx || echo "No running dx process"
 ```
 
 Αν το `pgrep` εξακολουθεί να βρίσκει διεργασία, σταματήστε την χειροκίνητα και ελέγξτε ξανά:
 
 ```bash
-pkill -f zeroclaw
+pkill -f dx
 ```
 
 ## Σχετικά Έγγραφα

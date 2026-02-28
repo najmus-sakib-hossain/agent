@@ -15,14 +15,14 @@ error() {
 
 usage() {
   cat <<'USAGE'
-ZeroClaw installer bootstrap engine
+DX installer bootstrap engine
 
 Usage:
   ./zeroclaw_install.sh [options]
   ./bootstrap.sh [options]         # compatibility entrypoint
 
 Modes:
-  Default mode installs/builds ZeroClaw only (requires existing Rust toolchain).
+  Default mode installs/builds DX only (requires existing Rust toolchain).
   Guided mode asks setup questions and configures options interactively.
   Optional bootstrap mode can also install system dependencies and Rust.
 
@@ -30,7 +30,7 @@ Options:
   --guided                   Run interactive guided installer
   --no-guided                Disable guided installer
   --docker                   Run bootstrap in Docker-compatible mode and launch onboarding inside the container
-  --docker-reset             Reset existing ZeroClaw Docker containers/networks/volumes and data dir before --docker bootstrap
+  --docker-reset             Reset existing DX Docker containers/networks/volumes and data dir before --docker bootstrap
   --docker-config <path>     Seed Docker config.toml from host path (skips default onboarding unless explicitly requested)
   --docker-secret-key <path> Seed Docker .secret_key from host path (used with --docker-config encrypted secrets)
   --docker-daemon            Start persistent Docker daemon container directly (requires --docker)
@@ -69,20 +69,20 @@ Examples:
 Environment:
   ZEROCLAW_CONTAINER_CLI     Container CLI command (default: docker; auto-fallback: podman)
   ZEROCLAW_DOCKER_DATA_DIR   Host path for Docker config/workspace persistence
-  ZEROCLAW_DOCKER_IMAGE      Docker image tag to build/run (default: zeroclaw-bootstrap:local)
+  ZEROCLAW_DOCKER_IMAGE      Docker image tag to build/run (default: dx-bootstrap:local)
   ZEROCLAW_DOCKER_BROWSER_RUNTIME
                             Browser runtime provisioning mode for --docker: "auto" (prompt), "on", or "off"
   ZEROCLAW_DOCKER_BROWSER_SIDECAR_IMAGE
                             Browser WebDriver sidecar image (default: selenium/standalone-chromium:latest)
   ZEROCLAW_DOCKER_BROWSER_SIDECAR_NAME
-                            Browser WebDriver sidecar container name (default: zeroclaw-browser-webdriver)
-  ZEROCLAW_DOCKER_NETWORK    Docker network for ZeroClaw + sidecars (default: zeroclaw-bootstrap-net)
+                            Browser WebDriver sidecar container name (default: dx-browser-webdriver)
+  ZEROCLAW_DOCKER_NETWORK    Docker network for DX + sidecars (default: dx-bootstrap-net)
   ZEROCLAW_DOCKER_CARGO_FEATURES
                             Extra Cargo features for Docker builds (comma-separated)
   ZEROCLAW_CARGO_FEATURES    Extra Cargo features for local source builds (comma-separated)
-  ZEROCLAW_CONFIG_PATH       Config path used for channel feature auto-detection (default: ~/.zeroclaw/config.toml)
+  ZEROCLAW_CONFIG_PATH       Config path used for channel feature auto-detection (default: ~/.dx/config.toml)
   ZEROCLAW_DOCKER_DAEMON_NAME
-                            Daemon container name for --docker-daemon (default: zeroclaw-daemon)
+                            Daemon container name for --docker-daemon (default: dx-daemon)
   ZEROCLAW_DOCKER_DAEMON_BIND_HOST
                             Host bind address for daemon port publish (default: 127.0.0.1)
   ZEROCLAW_DOCKER_DAEMON_HOST_PORT
@@ -279,9 +279,9 @@ install_prebuilt_binary() {
     return 1
   fi
 
-  archive_url="https://github.com/zeroclaw-labs/zeroclaw/releases/latest/download/zeroclaw-${target}.tar.gz"
-  temp_dir="$(mktemp -d -t zeroclaw-prebuilt-XXXXXX)"
-  archive_path="$temp_dir/zeroclaw-${target}.tar.gz"
+  archive_url="https://github.com/zeroclaw-labs/zeroclaw/releases/latest/download/dx-${target}.tar.gz"
+  temp_dir="$(mktemp -d -t dx-prebuilt-XXXXXX)"
+  archive_path="$temp_dir/dx-${target}.tar.gz"
 
   info "Attempting pre-built binary install for target: $target"
   if ! curl -fsSL "$archive_url" -o "$archive_path"; then
@@ -296,22 +296,22 @@ install_prebuilt_binary() {
     return 1
   fi
 
-  extracted_bin="$temp_dir/zeroclaw"
+  extracted_bin="$temp_dir/dx"
   if [[ ! -x "$extracted_bin" ]]; then
-    extracted_bin="$(find "$temp_dir" -maxdepth 2 -type f -name zeroclaw -perm -u+x | head -n 1 || true)"
+    extracted_bin="$(find "$temp_dir" -maxdepth 2 -type f -name dx -perm -u+x | head -n 1 || true)"
   fi
   if [[ -z "$extracted_bin" || ! -x "$extracted_bin" ]]; then
-    warn "Archive did not contain an executable zeroclaw binary."
+    warn "Archive did not contain an executable dx binary."
     rm -rf "$temp_dir"
     return 1
   fi
 
   install_dir="$HOME/.cargo/bin"
   mkdir -p "$install_dir"
-  install -m 0755 "$extracted_bin" "$install_dir/zeroclaw"
+  install -m 0755 "$extracted_bin" "$install_dir/dx"
   rm -rf "$temp_dir"
 
-  info "Installed pre-built binary to $install_dir/zeroclaw"
+  info "Installed pre-built binary to $install_dir/dx"
   if [[ ":$PATH:" != *":$install_dir:"* ]]; then
     warn "$install_dir is not in PATH for this shell."
     warn "Run: export PATH=\"$install_dir:\$PATH\""
@@ -356,7 +356,7 @@ run_pacman() {
 
   local pacman_cfg_tmp=""
   local pacman_rc=0
-  pacman_cfg_tmp="$(mktemp /tmp/zeroclaw-pacman.XXXXXX.conf)"
+  pacman_cfg_tmp="$(mktemp /tmp/dx-pacman.XXXXXX.conf)"
   cp /etc/pacman.conf "$pacman_cfg_tmp"
   if ! grep -Eq '^[[:space:]]*DisableSandboxSyscalls([[:space:]]|$)' "$pacman_cfg_tmp"; then
     printf '\nDisableSandboxSyscalls\n' >> "$pacman_cfg_tmp"
@@ -593,7 +593,7 @@ run_guided_installer() {
   fi
 
   echo
-  echo "ZeroClaw guided installer"
+  echo "DX guided installer"
   echo "Answer a few questions, then the installer will run automatically."
   echo
 
@@ -621,7 +621,7 @@ run_guided_installer() {
     SKIP_BUILD=true
   fi
 
-  if prompt_yes_no "Install zeroclaw into cargo bin now?" "yes"; then
+  if prompt_yes_no "Install dx into cargo bin now?" "yes"; then
     SKIP_INSTALL=false
   else
     SKIP_INSTALL=true
@@ -743,14 +743,14 @@ is_zeroclaw_container() {
   image_lc="$(printf '%s' "$image" | tr '[:upper:]' '[:lower:]')"
   command_lc="$(printf '%s' "$command" | tr '[:upper:]' '[:lower:]')"
 
-  [[ "$name_lc" == *"zeroclaw"* || "$image_lc" == *"zeroclaw"* || "$command_lc" == *"zeroclaw"* ]]
+  [[ "$name_lc" == *"dx"* || "$image_lc" == *"dx"* || "$command_lc" == *"dx"* ]]
 }
 
 is_zeroclaw_resource_name() {
   local name="$1"
   local name_lc
   name_lc="$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')"
-  [[ "$name_lc" == *"zeroclaw"* ]]
+  [[ "$name_lc" == *"dx"* ]]
 }
 
 maybe_stop_running_zeroclaw_containers() {
@@ -771,22 +771,22 @@ maybe_stop_running_zeroclaw_containers() {
     return 0
   fi
 
-  warn "Detected running ZeroClaw container(s):"
+  warn "Detected running DX container(s):"
   for row in "${running_rows[@]}"; do
     IFS=$'\t' read -r id name image command <<<"$row"
     echo "  - $name ($id) image=$image cmd=$command"
   done
 
   if ! guided_input_stream >/dev/null 2>&1; then
-    warn "Non-interactive mode detected; leaving existing ZeroClaw containers running."
+    warn "Non-interactive mode detected; leaving existing DX containers running."
     return 0
   fi
 
-  if prompt_yes_no "Stop these running ZeroClaw containers before continuing?" "yes"; then
-    info "Stopping ${#running_ids[@]} ZeroClaw container(s)"
+  if prompt_yes_no "Stop these running DX containers before continuing?" "yes"; then
+    info "Stopping ${#running_ids[@]} DX container(s)"
     "$CONTAINER_CLI" stop "${running_ids[@]}" >/dev/null
   else
-    warn "Continuing with existing ZeroClaw containers still running."
+    warn "Continuing with existing DX containers still running."
   fi
 }
 
@@ -800,7 +800,7 @@ reset_docker_zeroclaw_resources() {
   network_names=()
   volume_names=()
 
-  info "Resetting ZeroClaw Docker resources"
+  info "Resetting DX Docker resources"
 
   while IFS=$'\t' read -r id name image command; do
     if [[ -z "$id" ]]; then
@@ -813,14 +813,14 @@ reset_docker_zeroclaw_resources() {
   done < <("$CONTAINER_CLI" ps -a --format '{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Command}}')
 
   if [[ ${#container_ids[@]} -gt 0 ]]; then
-    info "Removing ${#container_ids[@]} ZeroClaw container(s)"
+    info "Removing ${#container_ids[@]} DX container(s)"
     for row in "${container_rows[@]}"; do
       IFS=$'\t' read -r id name image command <<<"$row"
       echo "  - $name ($id) image=$image cmd=$command"
     done
     "$CONTAINER_CLI" rm -f "${container_ids[@]}" >/dev/null
   else
-    info "No existing ZeroClaw containers found"
+    info "No existing DX containers found"
   fi
 
   while IFS= read -r resource_name; do
@@ -833,7 +833,7 @@ reset_docker_zeroclaw_resources() {
   done < <("$CONTAINER_CLI" network ls --format '{{.Name}}')
 
   if [[ ${#network_names[@]} -gt 0 ]]; then
-    info "Removing ${#network_names[@]} ZeroClaw network(s)"
+    info "Removing ${#network_names[@]} DX network(s)"
     for resource_name in "${network_names[@]}"; do
       echo "  - $resource_name"
       if ! "$CONTAINER_CLI" network rm "$resource_name" >/dev/null 2>&1; then
@@ -841,7 +841,7 @@ reset_docker_zeroclaw_resources() {
       fi
     done
   else
-    info "No existing ZeroClaw networks found"
+    info "No existing DX networks found"
   fi
 
   while IFS= read -r resource_name; do
@@ -854,7 +854,7 @@ reset_docker_zeroclaw_resources() {
   done < <("$CONTAINER_CLI" volume ls --format '{{.Name}}')
 
   if [[ ${#volume_names[@]} -gt 0 ]]; then
-    info "Removing ${#volume_names[@]} ZeroClaw volume(s)"
+    info "Removing ${#volume_names[@]} DX volume(s)"
     for resource_name in "${volume_names[@]}"; do
       echo "  - $resource_name"
       if ! "$CONTAINER_CLI" volume rm "$resource_name" >/dev/null 2>&1; then
@@ -862,7 +862,7 @@ reset_docker_zeroclaw_resources() {
       fi
     done
   else
-    info "No existing ZeroClaw volumes found"
+    info "No existing DX volumes found"
   fi
 
   if [[ -d "$docker_data_dir" ]]; then
@@ -1036,14 +1036,14 @@ run_docker_bootstrap() {
   local config_gateway_port_value
   local -a container_run_user_args container_run_namespace_args
   local -a container_extra_run_args container_extra_env_args docker_build_args daemon_cmd
-  docker_image="${ZEROCLAW_DOCKER_IMAGE:-zeroclaw-bootstrap:local}"
+  docker_image="${ZEROCLAW_DOCKER_IMAGE:-dx-bootstrap:local}"
   fallback_image="ghcr.io/zeroclaw-labs/zeroclaw:latest"
   docker_build_features="${ZEROCLAW_DOCKER_CARGO_FEATURES:-}"
   docker_browser_runtime_mode="${ZEROCLAW_DOCKER_BROWSER_RUNTIME:-auto}"
-  docker_browser_sidecar_name="${ZEROCLAW_DOCKER_BROWSER_SIDECAR_NAME:-zeroclaw-browser-webdriver}"
+  docker_browser_sidecar_name="${ZEROCLAW_DOCKER_BROWSER_SIDECAR_NAME:-dx-browser-webdriver}"
   docker_browser_sidecar_image="${ZEROCLAW_DOCKER_BROWSER_SIDECAR_IMAGE:-selenium/standalone-chromium:latest}"
-  docker_network="${ZEROCLAW_DOCKER_NETWORK:-zeroclaw-bootstrap-net}"
-  docker_daemon_name="${ZEROCLAW_DOCKER_DAEMON_NAME:-zeroclaw-daemon}"
+  docker_network="${ZEROCLAW_DOCKER_NETWORK:-dx-bootstrap-net}"
+  docker_daemon_name="${ZEROCLAW_DOCKER_DAEMON_NAME:-dx-daemon}"
   docker_daemon_bind_host="${ZEROCLAW_DOCKER_DAEMON_BIND_HOST:-127.0.0.1}"
   docker_daemon_host_port="${ZEROCLAW_DOCKER_DAEMON_HOST_PORT:-}"
   seed_config_path="${DOCKER_CONFIG_FILE:-}"
@@ -1051,9 +1051,9 @@ run_docker_bootstrap() {
   container_network_name=""
   docker_browser_webdriver_url=""
   if [[ "$TEMP_CLONE" == true ]]; then
-    default_data_dir="$HOME/.zeroclaw-docker"
+    default_data_dir="$HOME/.dx-docker"
   else
-    default_data_dir="$WORK_DIR/.zeroclaw-docker"
+    default_data_dir="$WORK_DIR/.dx-docker"
   fi
   docker_data_dir="${ZEROCLAW_DOCKER_DATA_DIR:-$default_data_dir}"
   DOCKER_DATA_DIR="$docker_data_dir"
@@ -1062,7 +1062,7 @@ run_docker_bootstrap() {
     reset_docker_zeroclaw_resources "$docker_data_dir"
   fi
 
-  mkdir -p "$docker_data_dir/.zeroclaw" "$docker_data_dir/workspace"
+  mkdir -p "$docker_data_dir/.dx" "$docker_data_dir/workspace"
 
   if [[ -n "$seed_config_path" ]]; then
     if [[ ! -f "$seed_config_path" ]]; then
@@ -1070,8 +1070,8 @@ run_docker_bootstrap() {
       exit 1
     fi
     info "Seeding Docker config from $seed_config_path"
-    install -m 600 "$seed_config_path" "$docker_data_dir/.zeroclaw/config.toml"
-    seed_docker_secret_key_for_config "$seed_config_path" "$docker_data_dir/.zeroclaw" "$seed_secret_key_path"
+    install -m 600 "$seed_config_path" "$docker_data_dir/.dx/config.toml"
+    seed_docker_secret_key_for_config "$seed_config_path" "$docker_data_dir/.dx" "$seed_secret_key_path"
   fi
 
   if [[ "$SKIP_INSTALL" == true ]]; then
@@ -1141,7 +1141,7 @@ run_docker_bootstrap() {
     info "Skipping Docker image build"
     if ! "$CONTAINER_CLI" image inspect "$docker_image" >/dev/null 2>&1; then
       warn "Local Docker image ($docker_image) was not found."
-      info "Pulling official ZeroClaw image ($fallback_image)"
+      info "Pulling official DX image ($fallback_image)"
       if ! "$CONTAINER_CLI" pull "$fallback_image"; then
         error "Failed to pull fallback Docker image: $fallback_image"
         error "Run without --skip-build to build locally, or verify access to GHCR."
@@ -1154,8 +1154,8 @@ run_docker_bootstrap() {
     fi
   fi
 
-  config_mount="$docker_data_dir/.zeroclaw:/zeroclaw-data/.zeroclaw"
-  workspace_mount="$docker_data_dir/workspace:/zeroclaw-data/workspace"
+  config_mount="$docker_data_dir/.dx:/dx-data/.dx"
+  workspace_mount="$docker_data_dir/workspace:/dx-data/workspace"
   if [[ "$CONTAINER_CLI" == "podman" ]]; then
     config_mount+=":Z"
     workspace_mount+=":Z"
@@ -1186,8 +1186,8 @@ run_docker_bootstrap() {
     fi
 
     config_gateway_port_value=""
-    if [[ -f "$docker_data_dir/.zeroclaw/config.toml" ]]; then
-      config_gateway_port_value="$(config_gateway_port "$docker_data_dir/.zeroclaw/config.toml" || true)"
+    if [[ -f "$docker_data_dir/.dx/config.toml" ]]; then
+      config_gateway_port_value="$(config_gateway_port "$docker_data_dir/.dx/config.toml" || true)"
     fi
     docker_daemon_port="${config_gateway_port_value:-42617}"
     if [[ -z "$docker_daemon_host_port" ]]; then
@@ -1204,8 +1204,8 @@ run_docker_bootstrap() {
     fi
     daemon_cmd+=(
       -p "${docker_daemon_bind_host}:${docker_daemon_host_port}:${docker_daemon_port}"
-      -e HOME=/zeroclaw-data
-      -e ZEROCLAW_WORKSPACE=/zeroclaw-data/workspace
+      -e HOME=/dx-data
+      -e ZEROCLAW_WORKSPACE=/dx-data/workspace
       -e ZEROCLAW_DOCKER_BOOTSTRAP=1
     )
     if [[ ${#container_extra_env_args[@]} -gt 0 ]]; then
@@ -1260,8 +1260,8 @@ MSG
         "${container_run_namespace_args[@]}" \
         "${container_run_user_args[@]}" \
         "${container_extra_run_args[@]+${container_extra_run_args[@]}}" \
-        -e HOME=/zeroclaw-data \
-        -e ZEROCLAW_WORKSPACE=/zeroclaw-data/workspace \
+        -e HOME=/dx-data \
+        -e ZEROCLAW_WORKSPACE=/dx-data/workspace \
         -e ZEROCLAW_DOCKER_BOOTSTRAP=1 \
         "${container_extra_env_args[@]+${container_extra_env_args[@]}}" \
         -v "$config_mount" \
@@ -1272,8 +1272,8 @@ MSG
       "$CONTAINER_CLI" run --rm -it \
         "${container_run_user_args[@]}" \
         "${container_extra_run_args[@]+${container_extra_run_args[@]}}" \
-        -e HOME=/zeroclaw-data \
-        -e ZEROCLAW_WORKSPACE=/zeroclaw-data/workspace \
+        -e HOME=/dx-data \
+        -e ZEROCLAW_WORKSPACE=/dx-data/workspace \
         -e ZEROCLAW_DOCKER_BOOTSTRAP=1 \
         "${container_extra_env_args[@]+${container_extra_env_args[@]}}" \
         -v "$config_mount" \
@@ -1313,7 +1313,7 @@ API_KEY="${ZEROCLAW_API_KEY:-}"
 PROVIDER="${ZEROCLAW_PROVIDER:-openrouter}"
 MODEL="${ZEROCLAW_MODEL:-}"
 LOCAL_CARGO_FEATURES="${ZEROCLAW_CARGO_FEATURES:-}"
-LOCAL_CONFIG_PATH="${ZEROCLAW_CONFIG_PATH:-$HOME/.zeroclaw/config.toml}"
+LOCAL_CONFIG_PATH="${ZEROCLAW_CONFIG_PATH:-$HOME/.dx/config.toml}"
 AUTO_CONFIG_FEATURES=""
 
 while [[ $# -gt 0 ]]; do
@@ -1541,7 +1541,7 @@ if [[ ! -f "$WORK_DIR/Cargo.toml" ]]; then
       exit 1
     fi
 
-    TEMP_DIR="$(mktemp -d -t zeroclaw-bootstrap-XXXXXX)"
+    TEMP_DIR="$(mktemp -d -t dx-bootstrap-XXXXXX)"
     info "No local repository detected; cloning latest main branch"
     git clone --depth 1 "$REPO_URL" "$TEMP_DIR"
     WORK_DIR="$TEMP_DIR"
@@ -1549,7 +1549,7 @@ if [[ ! -f "$WORK_DIR/Cargo.toml" ]]; then
   fi
 fi
 
-info "ZeroClaw bootstrap"
+info "DX bootstrap"
 echo "    workspace: $WORK_DIR"
 
 cd "$WORK_DIR"
@@ -1582,12 +1582,12 @@ if [[ "$DOCKER_MODE" == true ]]; then
   echo
   echo "✅ Docker bootstrap complete."
   echo
-  echo "Your containerized ZeroClaw data is persisted under:"
+  echo "Your containerized DX data is persisted under:"
   echo "  $DOCKER_DATA_DIR"
   echo
 
   if [[ "$DOCKER_DAEMON_MODE" == true ]]; then
-    daemon_name="${ZEROCLAW_DOCKER_DAEMON_NAME:-zeroclaw-daemon}"
+    daemon_name="${ZEROCLAW_DOCKER_DAEMON_NAME:-dx-daemon}"
     echo "Daemon mode is active; onboarding was intentionally skipped."
     echo "  container: $daemon_name"
     echo "  logs:      $CONTAINER_CLI logs -f $daemon_name"
@@ -1671,7 +1671,7 @@ else
 fi
 
 if [[ "$SKIP_INSTALL" == false ]]; then
-  info "Installing zeroclaw to cargo bin"
+  info "Installing dx to cargo bin"
   INSTALL_CMD=(cargo install --path "$WORK_DIR" --force --locked)
   if [[ -n "$LOCAL_CARGO_FEATURES" ]]; then
     info "Applying local Cargo features for install: $LOCAL_CARGO_FEATURES"
@@ -1683,18 +1683,18 @@ else
 fi
 
 ZEROCLAW_BIN=""
-if have_cmd zeroclaw; then
-  ZEROCLAW_BIN="zeroclaw"
-elif [[ -x "$HOME/.cargo/bin/zeroclaw" ]]; then
-  ZEROCLAW_BIN="$HOME/.cargo/bin/zeroclaw"
-elif [[ -x "$WORK_DIR/target/release/zeroclaw" ]]; then
-  ZEROCLAW_BIN="$WORK_DIR/target/release/zeroclaw"
+if have_cmd dx; then
+  ZEROCLAW_BIN="dx"
+elif [[ -x "$HOME/.cargo/bin/dx" ]]; then
+  ZEROCLAW_BIN="$HOME/.cargo/bin/dx"
+elif [[ -x "$WORK_DIR/target/release/dx" ]]; then
+  ZEROCLAW_BIN="$WORK_DIR/target/release/dx"
 fi
 
 if [[ "$RUN_ONBOARD" == true ]]; then
   if [[ -z "$ZEROCLAW_BIN" ]]; then
-    error "onboarding requested but zeroclaw binary is not available."
-    error "Run without --skip-install, or ensure zeroclaw is in PATH."
+    error "onboarding requested but dx binary is not available."
+    error "Run without --skip-install, or ensure dx is in PATH."
     exit 1
   fi
 
@@ -1732,7 +1732,7 @@ cat <<'DONE'
 ✅ Bootstrap complete.
 
 Next steps:
-  zeroclaw status
-  zeroclaw agent -m "Hello, ZeroClaw!"
-  zeroclaw gateway
+  dx status
+  dx agent -m "Hello, DX!"
+  dx gateway
 DONE

@@ -1,10 +1,10 @@
 # LangGraph Integration Guide
 
-This guide explains how to use the `zeroclaw-tools` Python package for consistent tool calling with any OpenAI-compatible LLM provider.
+This guide explains how to use the `dx-tools` Python package for consistent tool calling with any OpenAI-compatible LLM provider.
 
 ## Background
 
-Some LLM providers, particularly Chinese models like GLM-5 (Zhipu AI), have inconsistent tool calling behavior when using text-based tool invocation. ZeroClaw's Rust core uses structured tool calling via the OpenAI API format, but some models respond better to a different approach.
+Some LLM providers, particularly Chinese models like GLM-5 (Zhipu AI), have inconsistent tool calling behavior when using text-based tool invocation. DX's Rust core uses structured tool calling via the OpenAI API format, but some models respond better to a different approach.
 
 LangGraph provides a stateful graph execution engine that guarantees consistent tool calling behavior regardless of the underlying model's native capabilities.
 
@@ -14,7 +14,7 @@ LangGraph provides a stateful graph execution engine that guarantees consistent 
 ┌─────────────────────────────────────────────────────────────┐
 │                      Your Application                        │
 ├─────────────────────────────────────────────────────────────┤
-│                   zeroclaw-tools Agent                       │
+│                   dx-tools Agent                       │
 │                                                              │
 │   ┌─────────────────────────────────────────────────────┐   │
 │   │              LangGraph StateGraph                    │   │
@@ -44,7 +44,7 @@ LangGraph provides a stateful graph execution engine that guarantees consistent 
 ### Installation
 
 ```bash
-pip install zeroclaw-tools
+pip install dx-tools
 ```
 
 ### Basic Usage
@@ -182,15 +182,15 @@ export API_KEY="your-key"
 export BRAVE_API_KEY="your-brave-key"  # Optional, for web search
 
 # Single message
-zeroclaw-tools "What is the current date?"
+dx-tools "What is the current date?"
 
 # Interactive mode
-zeroclaw-tools -i
+dx-tools -i
 ```
 
-## Comparison with Rust ZeroClaw
+## Comparison with Rust DX
 
-| Aspect | Rust ZeroClaw | zeroclaw-tools |
+| Aspect | Rust DX | dx-tools |
 |--------|---------------|-----------------|
 | **Performance** | Ultra-fast (~10ms startup) | Python startup (~500ms) |
 | **Memory** | <5 MB | ~50 MB |
@@ -199,12 +199,12 @@ zeroclaw-tools -i
 | **Extensibility** | Rust traits | Python decorators |
 | **Ecosystem** | Rust crates | PyPI packages |
 
-**When to use Rust ZeroClaw:**
+**When to use Rust DX:**
 - Production edge deployments
 - Resource-constrained environments (Raspberry Pi, etc.)
 - Maximum performance requirements
 
-**When to use zeroclaw-tools:**
+**When to use dx-tools:**
 - Models with inconsistent native tool calling
 - Python-centric development
 - Rapid prototyping

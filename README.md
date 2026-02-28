@@ -1,30 +1,18 @@
-cargo build --release
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
 <p align="center">
-  <img src="zeroclaw.png" alt="ZeroClaw" width="200" />
+  <h1 align="center">DX 🚀</h1>
 </p>
 
-<h1 align="center">ZeroClaw 🦀</h1>
-
 <p align="center">
-  <strong>Zero overhead. Zero compromise. 100% Rust. 100% Agnostic.</strong><br>
-  ⚡️ <strong>Runs on any hardware with <5MB RAM: That's 99% less memory than OpenClaw and 98% cheaper than a Mac mini!</strong>
+  <strong>Enhance the development experience for <em>everyone</em>. 100% Rust. Offline-first. All platforms.</strong><br>
+  ⚡️ <strong>100+ LLM providers · saves 30–90% tokens · saves up to 70% RAM · runs on any OS</strong>
 </p>
 
 <p align="center">
   <a href="LICENSE-APACHE"><img src="https://img.shields.io/badge/license-MIT%20OR%20Apache%202.0-blue.svg" alt="License: MIT OR Apache-2.0" /></a>
   <a href="NOTICE"><img src="https://img.shields.io/github/contributors/zeroclaw-labs/zeroclaw?color=green" alt="Contributors" /></a>
   <a href="https://buymeacoffee.com/argenistherose"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Donate-yellow.svg?style=flat&logo=buy-me-a-coffee" alt="Buy Me a Coffee" /></a>
-  <a href="https://x.com/zeroclawlabs?s=21"><img src="https://img.shields.io/badge/X-%40zeroclawlabs-000000?style=flat&logo=x&logoColor=white" alt="X: @zeroclawlabs" /></a>
-  <a href="https://zeroclawlabs.cn/group.jpg"><img src="https://img.shields.io/badge/WeChat-Group-B7D7A8?logo=wechat&logoColor=white" alt="WeChat Group" /></a>
-  <a href="https://www.xiaohongshu.com/user/profile/67cbfc43000000000d008307?xsec_token=AB73VnYnGNx5y36EtnnZfGmAmS-6Wzv8WMuGpfwfkg6Yc%3D&xsec_source=pc_search"><img src="https://img.shields.io/badge/Xiaohongshu-Official-FF2442?style=flat" alt="Xiaohongshu: Official" /></a>
-  <a href="https://t.me/zeroclawlabs"><img src="https://img.shields.io/badge/Telegram-%40zeroclawlabs-26A5E4?style=flat&logo=telegram&logoColor=white" alt="Telegram: @zeroclawlabs" /></a>
-  <a href="https://www.facebook.com/groups/zeroclaw"><img src="https://img.shields.io/badge/Facebook-Group-1877F2?style=flat&logo=facebook&logoColor=white" alt="Facebook Group" /></a>
-  <a href="https://www.reddit.com/r/zeroclawlabs/"><img src="https://img.shields.io/badge/Reddit-r%2Fzeroclawlabs-FF4500?style=flat&logo=reddit&logoColor=white" alt="Reddit: r/zeroclawlabs" /></a>
-</p>
-<p align="center">
-Built by students and members of the Harvard, MIT, and Sundai.Club communities.
+  <a href="https://x.com/zeroclawlabs?s=21"><img src="https://img.shields.io/badge/X-%40dx-000000?style=flat&logo=x&logoColor=white" alt="X: @dx" /></a>
+  <a href="https://t.me/zeroclawlabs"><img src="https://img.shields.io/badge/Telegram-%40dx-26A5E4?style=flat&logo=telegram&logoColor=white" alt="Telegram: @dx" /></a>
 </p>
 
 <p align="center">
@@ -49,15 +37,15 @@ Built by students and members of the Harvard, MIT, and Sundai.Club communities.
 </p>
 
 <p align="center">
-  <strong>Fast, small, and fully autonomous AI assistant infrastructure</strong><br />
-  Deploy anywhere. Swap anything.
+  <strong>DX is the universal AI runtime for every developer, on every device.</strong><br />
+  Ask · Agent · Plan · Search · Study · Research — all in one.
 </p>
 
 <p align="center">
-  ZeroClaw is the <strong>runtime operating system</strong> for agentic workflows — infrastructure that abstracts models, tools, memory, and execution so agents can be built once and run anywhere.
+  DX is the <strong>development experience platform</strong> for agentic workflows — a single runtime that runs natively on macOS, Windows, Linux, Android, iOS, ChromeOS, watchOS, tvOS, and more. Deploy anywhere. Swap anything.
 </p>
 
-<p align="center"><code>Trait-driven architecture · secure-by-default runtime · provider/channel/tool swappable · pluggable everything</code></p>
+<p align="center"><code>100+ LLM providers · 400+ connectors · native on all OS · offline-first · trait-driven · secure-by-default</code></p>
 
 ### 📢 Announcements
 
@@ -65,38 +53,44 @@ Use this board for important notices (breaking changes, security advisories, mai
 
 | Date (UTC) | Level       | Notice                                                                                                                                                                                                                                                                                                                                                 | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-02-19 | _Critical_  | We are **not affiliated** with `openagen/zeroclaw`, `zeroclaw.org` or `zeroclaw.net`. The `zeroclaw.org` and `zeroclaw.net` domains currently points to the `openagen/zeroclaw` fork, and that domain/repository are impersonating our official website/project.                                                                                       | Do not trust information, binaries, fundraising, or announcements from those sources. Use only [this repository](https://github.com/zeroclaw-labs/zeroclaw) and our verified social accounts.                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 2026-02-21 | _Important_ | Our official website is now live: [zeroclawlabs.ai](https://zeroclawlabs.ai). Thanks for your patience while we prepared the launch. We are still seeing impersonation attempts, so do **not** join any investment or fundraising activity claiming the ZeroClaw name unless it is published through our official channels.                            | Use [this repository](https://github.com/zeroclaw-labs/zeroclaw) as the single source of truth. Follow [X (@zeroclawlabs)](https://x.com/zeroclawlabs?s=21), [Telegram (@zeroclawlabs)](https://t.me/zeroclawlabs), [Facebook (Group)](https://www.facebook.com/groups/zeroclaw), [Reddit (r/zeroclawlabs)](https://www.reddit.com/r/zeroclawlabs/), and [Xiaohongshu](https://www.xiaohongshu.com/user/profile/67cbfc43000000000d008307?xsec_token=AB73VnYnGNx5y36EtnnZfGmAmS-6Wzv8WMuGpfwfkg6Yc%3D&xsec_source=pc_search) for official updates. |
-| 2026-02-19 | _Important_ | Anthropic updated the Authentication and Credential Use terms on 2026-02-19. Claude Code OAuth tokens (Free, Pro, Max) are intended exclusively for Claude Code and Claude.ai; using OAuth tokens from Claude Free/Pro/Max in any other product, tool, or service (including Agent SDK) is not permitted and may violate the Consumer Terms of Service. | Please temporarily avoid Claude Code OAuth integrations to prevent potential loss. Original clause: [Authentication and Credential Use](https://code.claude.com/docs/en/legal-and-compliance#authentication-and-credential-use).                                                                                                                                                                                                                                                                                                                                                                                    |
+| 2026-02-19 | _Important_ | DX is the official rebrand of the project formerly known as ZeroClaw. All functionality is preserved; the binary is now `dx` and config lives in `~/.dx/`. | Update your scripts: replace `zeroclaw` → `dx` and `~/.zeroclaw/` → `~/.dx/`. |
+| 2026-02-21 | _Important_ | DX project is live. Use [this repository](https://github.com/zeroclaw-labs/zeroclaw) as the single source of truth until the repository is renamed. | Follow official social accounts for updates. |
 
 ### ✨ Features
 
-- 🏎️ **Lean Runtime by Default:** Common CLI and status workflows run in a few-megabyte memory envelope on release builds.
-- 💰 **Cost-Efficient Deployment:** Designed for low-cost boards and small cloud instances without heavyweight runtime dependencies.
-- ⚡ **Fast Cold Starts:** Single-binary Rust runtime keeps command and daemon startup near-instant for daily operations.
-- 🌍 **Portable Architecture:** One binary-first workflow across ARM, x86, and RISC-V with swappable providers/channels/tools.
-- 🔍 **Research Phase:** Proactive information gathering through tools before response generation — reduces hallucinations by fact-checking first.
+- 🚀 **All Operating Systems:** Native apps for macOS, Windows, Linux, Android, iOS, ChromeOS, watchOS, tvOS — and a web dashboard to manage them all from the browser.
+- 🧠 **100+ LLM Providers:** More providers than any other tool — all supported, all swappable. Runs offline too, using RLM and the DX serializer.
+- 💾 **30–90% Token Savings:** DX serializer, image tokenizer, and context compression cut token usage dramatically without losing meaning.
+- 🦀 **Up to 70% Less RAM:** 100% Rust runtime does more with less — sub-5MB memory footprint at idle.
+- 🔌 **400+ Connectors:** Link any skill from cloud CLI, any plugin, WhatsApp, Telegram, Discord, and all major social and communication apps.
+- 🎨 **Multi-Modal Generation:** Text, image, video, 3D/AR/VR, documents (PDF, DOCX) — generate everything in one place.
+- 📚 **6 Modes:** Ask · Agent · Plan · Search · Study · Research — each tuned for a specific workflow.
+- 🔧 **Extensions for Everything:** Chrome, Safari, Firefox, Edge · VS Code, JetBrains · Photoshop, Figma, DaVinci Resolve — and all the popular ones.
+- 🛡️ **Traffic Security (Green/Yellow/Red):** Agent auto-acts safely, warns on sensitive tasks, and always keeps a backup before destructive operations.
+- 📦 **Built-in Tools:** Forge (media VCS), Check (security rank), Workspace, Serializer, i18n, Driven, DCP.
 
-### Why teams pick ZeroClaw
+### Why developers pick DX
 
-- **Lean by default:** small Rust binary, fast startup, low memory footprint.
-- **Secure by design:** pairing, strict sandboxing, explicit allowlists, workspace scoping.
-- **Fully swappable:** core systems are traits (providers, channels, tools, memory, tunnels).
-- **No lock-in:** OpenAI-compatible provider support + pluggable custom endpoints.
+- **Works everywhere:** single binary for every OS — ARM, x86, RISC-V, mobile, embedded, browser.
+- **Offline-first:** RLM + DX serializer means full capability without an internet connection.
+- **Lean by default:** small Rust binary, fast startup, under 5MB memory on release builds.
+- **Secure by design:** traffic-coloured agent (green/yellow/red), pairing, sandboxing, explicit allowlists.
+- **Fully swappable:** providers, channels, tools, memory, tunnels are all traits — swap anything.
+- **No lock-in:** 100+ OpenAI-compatible and native provider endpoints.
 
-## Benchmark Snapshot (ZeroClaw vs OpenClaw, Reproducible)
+## Benchmark Snapshot (DX vs alternatives, Reproducible)
 
 Local machine quick benchmark (macOS arm64, Feb 2026) normalized for 0.8GHz edge hardware.
 
-|                           | OpenClaw      | NanoBot        | PicoClaw        | ZeroClaw 🦀          |
+|                           | OpenClaw      | NanoBot        | PicoClaw        | DX 🚀                |
 | ------------------------- | ------------- | -------------- | --------------- | -------------------- |
 | **Language**              | TypeScript    | Python         | Go              | **Rust**             |
 | **RAM**                   | > 1GB         | > 100MB        | < 10MB          | **< 5MB**            |
 | **Startup (0.8GHz core)** | > 500s        | > 30s          | < 1s            | **< 10ms**           |
 | **Binary Size**           | ~28MB (dist)  | N/A (Scripts)  | ~8MB            | **~8.8 MB**          |
-| **Cost**                  | Mac Mini $599 | Linux SBC ~$50 | Linux Board $10 | **Any hardware** |
+| **Cost**                  | Mac Mini $599 | Linux SBC ~$50 | Linux Board $10 | **Any hardware**     |
 
-> Notes: ZeroClaw results are measured on release builds using `/usr/bin/time -l`. OpenClaw requires Node.js runtime (typically ~390MB additional memory overhead), while NanoBot requires Python runtime. PicoClaw and ZeroClaw are static binaries. The RAM figures above are runtime memory; build-time compilation requirements are higher.
+> Notes: DX results are measured on release builds using `/usr/bin/time -l`. OpenClaw requires Node.js runtime (~390MB additional memory overhead). DX is a static binary. The RAM figures are runtime memory; build-time compilation requirements are higher.
 
 <p align="center">
   <img src="zero-claw.jpeg" alt="ZeroClaw vs OpenClaw Comparison" width="800" />
@@ -106,20 +100,19 @@ Local machine quick benchmark (macOS arm64, Feb 2026) normalized for 0.8GHz edge
 
 A heartfelt thank you to the communities and institutions that inspire and fuel this open-source work:
 
-- **Harvard University** — for fostering intellectual curiosity and pushing the boundaries of what's possible.
-- **MIT** — for championing open knowledge, open source, and the belief that technology should be accessible to everyone.
-- **Sundai Club** — for the community, the energy, and the relentless drive to build things that matter.
-- **The World & Beyond** 🌍✨ — to every contributor, dreamer, and builder out there making open source a force for good. This is for you.
+- **The open-source community** — for the libraries, ideas, and patches that make DX possible.
+- **Every early contributor** — your issues, PRs, and feedback shaped what DX is today.
+- **The World & Beyond** 🌍✨ — to every developer, dreamer, and builder out there. DX is for you.
 
-We're building in the open because the best ideas come from everywhere. If you're reading this, you're part of it. Welcome. 🦀❤️
+We're building in the open because the best ideas come from everywhere. If you're reading this, you're part of it. Welcome. 🚀❤️
 
 ## ⚠️ Official Repository & Impersonation Warning
 
-**This is the only official ZeroClaw repository:**
+**This is the only official DX repository:**
 
 > https://github.com/zeroclaw-labs/zeroclaw
 
-Any other repository, organization, domain, or package claiming to be "ZeroClaw" or implying affiliation with ZeroClaw Labs is **unauthorized and not affiliated with this project**. Known unauthorized forks will be listed in [TRADEMARK.md](TRADEMARK.md).
+Any other repository, organization, domain, or package claiming to be "DX" or implying affiliation with DX Labs is **unauthorized and not affiliated with this project**. Known unauthorized forks will be listed in [TRADEMARK.md](TRADEMARK.md).
 
 If you encounter impersonation or trademark misuse, please [open an issue](https://github.com/zeroclaw-labs/zeroclaw/issues).
 
@@ -127,7 +120,7 @@ If you encounter impersonation or trademark misuse, please [open an issue](https
 
 ## License
 
-ZeroClaw is dual-licensed for maximum openness and contributor protection:
+DX is dual-licensed for maximum openness and contributor protection:
 
 | License | Use case |
 |---|---|
@@ -138,7 +131,7 @@ You may choose either license. **Contributors automatically grant rights under b
 
 ### Trademark
 
-The **ZeroClaw** name and logo are trademarks of ZeroClaw Labs. This license does not grant permission to use them to imply endorsement or affiliation. See [TRADEMARK.md](TRADEMARK.md) for permitted and prohibited uses.
+The **DX** name and logo are trademarks of DX Labs. This license does not grant permission to use them to imply endorsement or affiliation. See [TRADEMARK.md](TRADEMARK.md) for permitted and prohibited uses.
 
 ### Contributor Protections
 
@@ -149,7 +142,7 @@ The **ZeroClaw** name and logo are trademarks of ZeroClaw Labs. This license doe
 
 ## Contributing
 
-New to ZeroClaw? Look for issues labeled [`good first issue`](https://github.com/zeroclaw-labs/zeroclaw/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) — see our [Contributing Guide](CONTRIBUTING.md#first-time-contributors) for how to get started.
+New to DX? Look for issues labeled [`good first issue`](https://github.com/zeroclaw-labs/zeroclaw/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) — see our [Contributing Guide](CONTRIBUTING.md#first-time-contributors) for how to get started.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md). Implement a trait, submit a PR:
 
@@ -160,11 +153,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md). Implement a trait, 
 - New `Tool` → `src/tools/`
 - New `Memory` → `src/memory/`
 - New `Tunnel` → `src/tunnel/`
-- New `Skill` → `~/.zeroclaw/workspace/skills/<name>/`
+- New `Skill` → `~/.dx/workspace/skills/<name>/`
 
 ---
 
-**ZeroClaw** — Zero overhead. Zero compromise. Deploy anywhere. Swap anything. 🦀
+**DX** — Enhance the development experience for everyone. Deploy anywhere. Swap anything. 🚀
 
 ## Star History
 
