@@ -1060,6 +1060,46 @@ pub fn is_aieos_configured(config: &IdentityConfig) -> bool {
     config.format == "aieos" && (config.aieos_path.is_some() || config.aieos_inline.is_some())
 }
 
+/// Migrate legacy "ZeroClaw" identity strings in workspace files to the current
+/// agent name. Called once at agent startup to fix any stale workspace files that
+/// were generated before the DX rebrand.
+pub fn migrate_legacy_identity_strings(workspace_dir: &Path, agent_name: &str) {
+    const LEGACY_NAMES: &[&str] = &["ZeroClaw", "zeroclaw"];
+    const IDENTITY_FILES: &[&str] = &[
+        "SOUL.md",
+        "IDENTITY.md",
+        "AGENTS.md",
+        "USER.md",
+        "HEARTBEAT.md",
+        "BOOTSTRAP.md",
+        "TOOLS.md",
+        "MEMORY.md",
+    ];
+
+    for filename in IDENTITY_FILES {
+        let path = workspace_dir.join(filename);
+        if !path.exists() {
+            continue;
+        }
+        let Ok(content) = std::fs::read_to_string(&path) else {
+            continue;
+        };
+        let mut updated = content.clone();
+        for legacy in LEGACY_NAMES {
+            if updated.contains(legacy) {
+                updated = updated.replace(legacy, agent_name);
+            }
+        }
+        if updated != content {
+            if let Err(e) = std::fs::write(&path, &updated) {
+                tracing::warn!(file = %path.display(), error = %e, "Failed to migrate legacy identity in workspace file");
+            } else {
+                tracing::debug!(file = %path.display(), "Migrated legacy identity strings to {}", agent_name);
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
