@@ -2409,7 +2409,10 @@ async fn handle_runtime_command_if_needed(
             let request_id = raw_request_id.trim().to_string();
             if request_id.is_empty() {
                 "Usage: `/approve-allow <request-id>`".to_string()
-            } else if !ctx.approval_manager.has_non_cli_pending_request(&request_id) {
+            } else if !ctx
+                .approval_manager
+                .has_non_cli_pending_request(&request_id)
+            {
                 format!(
                     "Pending approval request `{request_id}` was not found or has already expired."
                 )
@@ -2425,7 +2428,10 @@ async fn handle_runtime_command_if_needed(
             let request_id = raw_request_id.trim().to_string();
             if request_id.is_empty() {
                 "Usage: `/approve-deny <request-id>`".to_string()
-            } else if !ctx.approval_manager.has_non_cli_pending_request(&request_id) {
+            } else if !ctx
+                .approval_manager
+                .has_non_cli_pending_request(&request_id)
+            {
                 format!(
                     "Pending approval request `{request_id}` was not found or has already expired."
                 )

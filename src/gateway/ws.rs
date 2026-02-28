@@ -10,9 +10,7 @@
 //! ```
 
 use super::AppState;
-use crate::agent::loop_::{
-    build_shell_policy_instructions, build_tool_instructions_from_specs,
-};
+use crate::agent::loop_::{build_shell_policy_instructions, build_tool_instructions_from_specs};
 use crate::approval::ApprovalManager;
 use crate::providers::ChatMessage;
 use axum::{
