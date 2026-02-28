@@ -992,6 +992,20 @@ fn snapshot_non_cli_excluded_tools(ctx: &ChannelRuntimeContext) -> Vec<String> {
         .clone()
 }
 
+fn runtime_perplexity_filter_snapshot(
+    ctx: &ChannelRuntimeContext,
+) -> crate::config::PerplexityFilterConfig {
+    if let Some(config_path) = runtime_config_path(ctx) {
+        let store = runtime_config_store()
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        if let Some(state) = store.get(&config_path) {
+            return state.perplexity_filter.clone();
+        }
+    }
+    crate::config::PerplexityFilterConfig::default()
+}
+
 fn filtered_tool_specs_for_runtime(
     tools_registry: &[Box<dyn Tool>],
     excluded_tools: &[String],
@@ -2389,6 +2403,38 @@ async fn handle_runtime_command_if_needed(
             match describe_non_cli_approvals(ctx, sender, source_channel, reply_target).await {
                 Ok(summary) => summary,
                 Err(err) => format!("Failed to read approval state: {err}"),
+            }
+        }
+        ChannelRuntimeCommand::ApprovePendingRequest(raw_request_id) => {
+            let request_id = raw_request_id.trim().to_string();
+            if request_id.is_empty() {
+                "Usage: `/approve-allow <request-id>`".to_string()
+            } else if !ctx.approval_manager.has_non_cli_pending_request(&request_id) {
+                format!(
+                    "Pending approval request `{request_id}` was not found or has already expired."
+                )
+            } else {
+                ctx.approval_manager
+                    .record_non_cli_pending_resolution(&request_id, ApprovalResponse::Yes);
+                format!(
+                    "Approved pending request `{request_id}`. The waiting agent turn will proceed."
+                )
+            }
+        }
+        ChannelRuntimeCommand::DenyToolApproval(raw_request_id) => {
+            let request_id = raw_request_id.trim().to_string();
+            if request_id.is_empty() {
+                "Usage: `/approve-deny <request-id>`".to_string()
+            } else if !ctx.approval_manager.has_non_cli_pending_request(&request_id) {
+                format!(
+                    "Pending approval request `{request_id}` was not found or has already expired."
+                )
+            } else {
+                ctx.approval_manager
+                    .record_non_cli_pending_resolution(&request_id, ApprovalResponse::No);
+                format!(
+                    "Denied pending request `{request_id}`. The waiting agent turn will be cancelled."
+                )
             }
         }
     };
